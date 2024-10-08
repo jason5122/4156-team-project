@@ -14,89 +14,92 @@ import java.util.Map;
  */
 public class MyFileDatabase {
 
-  /**
-   * Constructs a MyFileDatabase object and loads up the data structure with
-   * the contents of the file.
-   *
-   * @param flag     used to distinguish mode of database
-   * @param filePath the path to the file containing the entries of the database
-   */
-  public MyFileDatabase(int flag, String filePath) {
-    this.filePath = filePath;
-    if (flag == 0) {
-      this.departmentMapping = deSerializeObjectFromFile();
+    /**
+     * Constructs a MyFileDatabase object and loads up the data structure with
+     * the contents of the file.
+     *
+     * @param flag     used to distinguish mode of database
+     * @param filePath the path to the file containing the entries of the database
+     */
+    public MyFileDatabase(int flag, String filePath) {
+        this.filePath = filePath;
+        if (flag == 0) {
+            this.departmentMapping = deSerializeObjectFromFile();
+        }
     }
-  }
 
-  /**
-   * Sets the department mapping of the database.
-   *
-   * @param mapping the mapping of department names to Department objects
-   */
-  public void setMapping(Map<String, Department> mapping) {
-    this.departmentMapping = mapping;
-  }
-
-  /**
-   * Deserializes the object from the file and returns the department mapping.
-   *
-   * @return the deserialized department mapping
-   */
-  public Map<String, Department> deSerializeObjectFromFile() {
-    try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filePath))) {
-      Object obj = in.readObject();
-      if (obj instanceof HashMap) {
-        return (HashMap<String, Department>) obj;
-      } else {
-        throw new IllegalArgumentException("Invalid object type in file.");
-      }
-    } catch (IOException | ClassNotFoundException e) {
-      e.printStackTrace();
-      return Collections.emptyMap();
+    /**
+     * Sets the department mapping of the database.
+     *
+     * @param mapping the mapping of department names to Department objects
+     */
+    public void setMapping(Map<String, Department> mapping) {
+        this.departmentMapping = mapping;
     }
-  }
 
-  /**
-   * Saves the contents of the internal data structure to the file. Contents of the file are
-   * overwritten with this operation.
-   */
-  public void saveContentsToFile() {
-    try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath))) {
-      out.writeObject(departmentMapping);
-      System.out.println("Object serialized successfully.");
-    } catch (IOException e) {
-      e.printStackTrace();
+    /**
+     * Deserializes the object from the file and returns the department mapping.
+     *
+     * @return the deserialized department mapping
+     */
+    public Map<String, Department> deSerializeObjectFromFile() {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filePath))) {
+            Object obj = in.readObject();
+            if (obj instanceof HashMap) {
+                return (HashMap<String, Department>)obj;
+            } else {
+                throw new IllegalArgumentException("Invalid object type in file.");
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return Collections.emptyMap();
+        }
     }
-  }
 
-  /**
-   * Gets the department mapping of the database.
-   *
-   * @return the department mapping
-   */
-  public Map<String, Department> getDepartmentMapping() {
-    return this.departmentMapping;
-  }
-
-  /**
-   * Returns a string representation of the database.
-   *
-   * @return a string representation of the database
-   */
-  @Override
-  public String toString() {
-    StringBuilder result = new StringBuilder();
-    for (Map.Entry<String, Department> entry : departmentMapping.entrySet()) {
-      String key = entry.getKey();
-      Department value = entry.getValue();
-      result.append("For the ").append(key).append(" department: \n").append(value.toString());
+    /**
+     * Saves the contents of the internal data structure to the file. Contents of the file are
+     * overwritten with this operation.
+     */
+    public void saveContentsToFile() {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            out.writeObject(departmentMapping);
+            System.out.println("Object serialized successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-    return result.toString();
-  }
 
-  /** The path to the file containing the database entries. */
-  private String filePath;
+    /**
+     * Gets the department mapping of the database.
+     *
+     * @return the department mapping
+     */
+    public Map<String, Department> getDepartmentMapping() {
+        return this.departmentMapping;
+    }
 
-  /** The mapping of department names to Department objects. */
-  private Map<String, Department> departmentMapping;
+    /**
+     * Returns a string representation of the database.
+     *
+     * @return a string representation of the database
+     */
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        for (Map.Entry<String, Department> entry : departmentMapping.entrySet()) {
+            String key = entry.getKey();
+            Department value = entry.getValue();
+            result.append("For the ")
+                .append(key)
+                .append(" department: \n")
+                .append(value.toString());
+        }
+        return result.toString();
+    }
+
+    /** The path to the file containing the database entries. */
+    private String filePath;
+
+    /** The mapping of department names to Department objects. */
+    private Map<String, Department> departmentMapping;
 }
