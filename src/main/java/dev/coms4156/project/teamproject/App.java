@@ -33,10 +33,12 @@ public class App implements CommandLineRunner {
      */
     @Override
     public void run(String[] args) {
+        // TODO: Convert this to a test.
         databaseExperiment();
         System.out.println("Start up");
     }
 
+    // TODO: Convert this to a test.
     private static void databaseExperiment() {
         String url = "jdbc:postgresql://34.86.228.87/team_project_database";
         Properties props = new Properties();
