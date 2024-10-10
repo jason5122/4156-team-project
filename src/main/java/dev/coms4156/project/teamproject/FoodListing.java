@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Random;
 
 /**
- * Represents a Food Listing
+ * Represents a Food Listing.
  */
 public class FoodListing implements Serializable {
 
@@ -30,7 +30,8 @@ public class FoodListing implements Serializable {
    * @param latitude latitude of the pick up location
    * @param longitude longitude of the pick up location
    */
-  public FoodListing(String accountId, String foodType, int quantityListed, LocalDateTime earliestPickUpTime, float latitude, float longitude) {
+  public FoodListing(String accountId, String foodType, int quantityListed, 
+        LocalDateTime earliestPickUpTime, float latitude, float longitude) {
     this.accountId = accountId;
     this.foodType = foodType;
     this.quantityListed = quantityListed;

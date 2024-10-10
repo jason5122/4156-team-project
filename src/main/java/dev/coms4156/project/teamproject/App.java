@@ -1,8 +1,5 @@
 package dev.coms4156.project.teamproject;
 
-import jakarta.annotation.PreDestroy;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,24 +13,24 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class App implements CommandLineRunner {
 
-    /**
-     * The main launcher for the service all it does is make a call to the overridden run method.
-     *
-     * @param args A {@code String[]} of any potential runtime arguments
-     */
-    public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
-    }
+  /**
+   * The main launcher for the service all it does is make a call to the overridden run method.
+   *
+   * @param args A {@code String[]} of any potential runtime arguments
+   */
+  public static void main(String[] args) {
+    SpringApplication.run(App.class, args);
+  }
 
-    /**
-     * This contains all the setup logic, it will mainly be focused on loading up and creating an
-     * instance of the database based off a saved file or will create a fresh database if the file
-     * is not present.
-     *
-     * @param args A {@code String[]} of any potential runtime args
-     */
-    @Override
-    public void run(String[] args) {
-        System.out.println("Start up");
-    }
+  /**
+   * This contains all the setup logic, it will mainly be focused on loading up and creating an
+   * instance of the database based off a saved file or will create a fresh database if the file
+   * is not present.
+   *
+   * @param args A {@code String[]} of any potential runtime args
+   */
+  @Override
+  public void run(String[] args) {
+    System.out.println("Start up");
+  }
 }
