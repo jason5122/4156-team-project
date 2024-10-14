@@ -1,13 +1,14 @@
 package dev.coms4156.project.teamproject;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
  * Represents a donation.
  */
-public class Donation {
+public class Donation implements Serializable {
   @Serial
   private static final long serialVersionUID = 234567L;
   private final String accountId;
