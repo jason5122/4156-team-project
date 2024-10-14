@@ -3,22 +3,31 @@ package dev.coms4156.project.teamproject;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Random;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * Represents a Food Listing.
  */
+@Entity
 public class FoodListing implements Serializable {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private int listingId;
 
   @Serial
   private static final long serialVersionUID = 123456L;
+
   private final String accountId;
   private String foodType;
   private int quantityListed;
   private LocalDateTime earliestPickUpTime;
   private float latitude;
   private float longitude;
-  private final int listingId;
 
   /**
    * Constructs a food listing object with the given parameters.
@@ -38,8 +47,6 @@ public class FoodListing implements Serializable {
     this.earliestPickUpTime = earliestPickUpTime;
     this.latitude = latitude;
     this.longitude = longitude;
-    Random rand = new Random();
-    this.listingId = rand.nextInt(1000);
   }
 
   public String getAccountId() {
