@@ -3,30 +3,39 @@ package dev.coms4156.project.teamproject;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Represents a Food Listing.
  */
 @Entity
+@Table(name = "food_listing")
 public class FoodListing implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "listing_id", unique = true)
   private int listingId;
 
   @Serial
   private static final long serialVersionUID = 123456L;
 
-  private final String accountId;
+  private String accountId;
   private String foodType;
   private int quantityListed;
   private LocalDateTime earliestPickUpTime;
   private float latitude;
   private float longitude;
+
+    // No-argument constructor required by JPA
+    public FoodListing() {
+    }
 
   /**
    * Constructs a food listing object with the given parameters.
