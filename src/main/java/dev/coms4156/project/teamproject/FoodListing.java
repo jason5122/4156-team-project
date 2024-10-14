@@ -1,41 +1,53 @@
 package dev.coms4156.project.teamproject;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 
 /**
  * Represents a Food Listing.
  */
 @Entity
+@Access(AccessType.FIELD)
 @Table(name = "food_listing")
 public class FoodListing implements Serializable {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "listing_id", unique = true)
   private int listingId;
 
-  @Serial
   private static final long serialVersionUID = 123456L;
 
+  @Column(name = "account_id", nullable = false)
   private String accountId;
+
+  @Column(name = "food_type")
   private String foodType;
+
+  @Column(name = "quantity")
   private int quantityListed;
+
+  @Column(name = "earliest_pickup")
   private LocalDateTime earliestPickUpTime;
+
+  @Column(name = "latitude")
   private float latitude;
+  
+  @Column(name = "longitude")
   private float longitude;
 
-    // No-argument constructor required by JPA
-    public FoodListing() {
-    }
+  // No-argument constructor required by JPA
+  public FoodListing() {}
 
   /**
    * Constructs a food listing object with the given parameters.
