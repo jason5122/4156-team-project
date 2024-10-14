@@ -3,7 +3,6 @@ package dev.coms4156.project.teamproject;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
