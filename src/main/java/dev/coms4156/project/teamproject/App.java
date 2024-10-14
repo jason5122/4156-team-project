@@ -3,6 +3,8 @@ package dev.coms4156.project.teamproject;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * Class contains all the startup logic for the application.
@@ -11,6 +13,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * YOU MAY MAKE STYLE/REFACTOR MODIFICATIONS AS NEEDED
  */
 @SpringBootApplication
+@EntityScan(basePackages = {"dev.coms4156.project.teamproject"})
+@EnableJpaRepositories(basePackages = {"dev.coms4156.project.teamproject.repository"})
 public class App implements CommandLineRunner {
 
   /**

@@ -1,24 +1,53 @@
 package dev.coms4156.project.teamproject;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Random;
+
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 
 /**
  * Represents a Food Listing.
  */
+@Entity
+@Access(AccessType.FIELD)
+@Table(name = "food_listing")
 public class FoodListing implements Serializable {
 
-  @Serial
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "listing_id", unique = true)
+  private int listingId;
+
   private static final long serialVersionUID = 123456L;
-  private final String accountId;
+
+  @Column(name = "account_id", nullable = false)
+  private String accountId;
+
+  @Column(name = "food_type")
   private String foodType;
+
+  @Column(name = "quantity")
   private int quantityListed;
+
+  @Column(name = "earliest_pickup")
   private LocalDateTime earliestPickUpTime;
+
+  @Column(name = "latitude")
   private float latitude;
+  
+  @Column(name = "longitude")
   private float longitude;
-  private final int listingId;
+
+  // No-argument constructor required by JPA
+  public FoodListing() {}
 
   /**
    * Constructs a food listing object with the given parameters.
@@ -38,8 +67,6 @@ public class FoodListing implements Serializable {
     this.earliestPickUpTime = earliestPickUpTime;
     this.latitude = latitude;
     this.longitude = longitude;
-    Random rand = new Random();
-    this.listingId = rand.nextInt(1000);
   }
 
   public String getAccountId() {
