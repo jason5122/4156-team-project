@@ -1,6 +1,6 @@
-package dev.coms4156.project.teamproject.repository;
+package dev.coms4156.project.teamproject.controller;
 
-import dev.coms4156.project.teamproject.FoodListing;
+import dev.coms4156.project.teamproject.model.FoodListing;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
