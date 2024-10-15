@@ -1,4 +1,4 @@
-package dev.coms4156.project.teamproject;
+package dev.coms4156.project.teamproject.model;
 
 import java.io.Serializable;
 

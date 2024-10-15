@@ -13,8 +13,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * YOU MAY MAKE STYLE/REFACTOR MODIFICATIONS AS NEEDED
  */
 @SpringBootApplication
-@EntityScan(basePackages = {"dev.coms4156.project.teamproject"})
-@EnableJpaRepositories(basePackages = {"dev.coms4156.project.teamproject.repository"})
+@EntityScan(basePackages = {"dev.coms4156.project.teamproject.model"})
+@EnableJpaRepositories(basePackages = {"dev.coms4156.project.teamproject.controller"})
 public class App implements CommandLineRunner {
 
   /**

@@ -1,6 +1,7 @@
-package dev.coms4156.project.teamproject;
+package dev.coms4156.project.teamproject.view;
 
-import dev.coms4156.project.teamproject.repository.FoodListingRepository;
+import dev.coms4156.project.teamproject.controller.FoodListingRepository;
+import dev.coms4156.project.teamproject.model.FoodListing;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ public class RouteController {
      * @return Confirmation message
      */
     @PostMapping("/createFoodListing")
-    public String createFoodListing(@RequestParam String accountId, @RequestParam String foodType,
+    public @ResponseBody String createFoodListing(@RequestParam String accountId, @RequestParam String foodType,
                                     @RequestParam int quantityListed, @RequestParam float latitude,
                                     @RequestParam float longitude) {
 
@@ -41,13 +42,18 @@ public class RouteController {
         return "Food listing created successfully with ID: " + foodListing.getListingId();
     }
 
+    @GetMapping("/getFoodListings")
+    public @ResponseBody Iterable<FoodListing> getFoodListings() {
+        return foodListingRepository.findAll();
+    }
+
     /**
      * Redirects to the homepage.
      *
      * @return A String containing the name of the html file to be loaded.
      */
     @GetMapping({"/", "/index", "/home"})
-    public String index() {
+    public @ResponseBody String index() {
         return "Welcome, in order to make an API call direct your browser or Postman to an "
             + "endpoint "
             + "\n\n This can be done using the following format: \n\n http:127.0.0"
