@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.format.DateTimeFormatter;
 
 
 /**
@@ -67,6 +68,19 @@ public class FoodListing implements Serializable {
     this.earliestPickUpTime = earliestPickUpTime;
     this.latitude = latitude;
     this.longitude = longitude;
+  }
+
+  public String toString() {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    String formattedPickUpTime = earliestPickUpTime.format(formatter);
+    return "FoodListing{"
+        + "accountId='" + accountId + "'"
+        + ", foodType=" + foodType
+        + ", quantityListed=" + quantityListed
+        + ", earliestPickUpTime=" + formattedPickUpTime
+        + ", latitude=" + String.format("%.3f", latitude)
+        + ", longitude=" + String.format("%.3f", longitude)
+        + '}';
   }
 
   public String getAccountId() {
