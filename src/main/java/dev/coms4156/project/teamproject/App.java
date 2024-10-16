@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 @SpringBootApplication
 @EntityScan(basePackages = {"dev.coms4156.project.teamproject.model"})
-@EnableJpaRepositories(basePackages = {"dev.coms4156.project.teamproject.controller"})
+@EnableJpaRepositories(basePackages = {"dev.coms4156.project.teamproject.repository"})
 public class App implements CommandLineRunner {
 
   /**

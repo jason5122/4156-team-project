@@ -1,8 +1,9 @@
-package dev.coms4156.project.teamproject.view;
+package dev.coms4156.project.teamproject.controller;
 
-import dev.coms4156.project.teamproject.controller.FoodListingRepository;
+import dev.coms4156.project.teamproject.repository.FoodListingRepository;
 import dev.coms4156.project.teamproject.model.FoodListing;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RouteController {
 
-    @Autowired
-    private FoodListingRepository foodListingRepository;
+    @Autowired private FoodListingRepository foodListingRepository;
 
     /**
      * API endpoint to create a new food listing.
@@ -30,9 +30,10 @@ public class RouteController {
      * @return Confirmation message
      */
     @PostMapping("/createFoodListing")
-    public @ResponseBody String createFoodListing(@RequestParam String accountId, @RequestParam String foodType,
-                                    @RequestParam int quantityListed, @RequestParam float latitude,
-                                    @RequestParam float longitude) {
+    public @ResponseBody
+    String createFoodListing(@RequestParam String accountId, @RequestParam String foodType,
+                             @RequestParam int quantityListed, @RequestParam float latitude,
+                             @RequestParam float longitude) {
 
         FoodListing foodListing = new FoodListing(accountId, foodType, quantityListed,
                                                   LocalDateTime.now(), latitude, longitude);
@@ -44,7 +45,11 @@ public class RouteController {
 
     @GetMapping("/getFoodListings")
     public @ResponseBody Iterable<FoodListing> getFoodListings() {
-        return foodListingRepository.findAll();
+        List<FoodListing> listings = foodListingRepository.findAll();
+        for (FoodListing listing : listings) {
+            System.out.println(listing.getLatitude() + ", " + listing.getLongitude());
+        }
+        return listings;
     }
 
     /**
