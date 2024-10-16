@@ -3,15 +3,12 @@ package dev.coms4156.project.teamproject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import dev.coms4156.project.teamproject.model.Location;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 
 /**
  * This class contains unit tests for the Location class.
  */
-@SpringBootTest
-@ContextConfiguration
 public class LocationUnitTests {
     @Test
     public void distanceTest1() {
