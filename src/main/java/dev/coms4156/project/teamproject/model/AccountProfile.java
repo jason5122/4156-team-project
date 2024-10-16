@@ -46,7 +46,7 @@ public class AccountProfile implements Serializable {
   /**
    * Constructs a new Account Profile object.
    *
-   * @param accountId unique ID of the account
+   * @param client client for whom this account is being created
    * @param accountType type of account (provider or recipient)
    * @param phoneNumber phone number for contact (validated for length)
    * @param name name associated with the account
