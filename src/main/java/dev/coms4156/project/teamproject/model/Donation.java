@@ -5,17 +5,29 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+
 /**
  * Represents a donation.
  */
+@Entity
 public class Donation implements Serializable {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "donation_id", unique = true)
+  private int donationId;
+  
   @Serial
   private static final long serialVersionUID = 234567L;
   private final String accountId;
   private final int listingId;
   private int quantityPickedUp;
   private LocalDateTime pickUpTime;
-  private final String donationId;
 
   /**
    * Creates a new donation object with the given params.
@@ -31,7 +43,6 @@ public class Donation implements Serializable {
     this.listingId = listingId;
     this.quantityPickedUp = quantityPickedUp;
     this.pickUpTime = pickUpTime;
-    this.donationId = genDonationId(accountId);
   }
 
   /**
@@ -47,7 +58,7 @@ public class Donation implements Serializable {
     return accountId + timestamp;
   }
 
-  public String getDonationId() {
+  public int getDonationId() {
     return donationId;
   }
 
