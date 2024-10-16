@@ -1,4 +1,4 @@
-package dev.coms4156.project.teamproject.controller;
+package dev.coms4156.project.teamproject.repository;
 
 import dev.coms4156.project.teamproject.model.FoodListing;
 import org.springframework.data.jpa.repository.JpaRepository;
