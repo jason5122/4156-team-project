@@ -1,5 +1,6 @@
 package dev.coms4156.project.teamproject.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -7,9 +8,12 @@ import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 
@@ -21,12 +25,17 @@ import jakarta.persistence.Table;
 @Table(name = "food_listing")
 public class FoodListing implements Serializable {
 
+  @Serial
+  private static final long serialVersionUID = 123456L;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "listing_id", unique = true)
   private int listingId;
 
-  private static final long serialVersionUID = 123456L;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)  
+  @JoinColumn(name = "client_id", nullable = false)  
+  private ClientProfile client;
 
   @Column(name = "account_id", nullable = false)
   private String accountId;
@@ -53,15 +62,17 @@ public class FoodListing implements Serializable {
    * Constructs a food listing object with the given parameters.
    *
    * @param accountId Account id of the provider who listed the food
+   * @param client ClientProfile 
    * @param foodType Type of food
    * @param quantityListed Quantity of food in bags
    * @param earliestPickUpTime Earliest pick up time for the food listing
    * @param latitude latitude of the pick up location
    * @param longitude longitude of the pick up location
    */
-  public FoodListing(String accountId, String foodType, int quantityListed, 
+  public FoodListing(String accountId, ClientProfile client, String foodType, int quantityListed, 
         LocalDateTime earliestPickUpTime, float latitude, float longitude) {
     this.accountId = accountId;
+	this.client = client;
     this.foodType = foodType;
     this.quantityListed = quantityListed;
     this.earliestPickUpTime = earliestPickUpTime;
@@ -71,6 +82,10 @@ public class FoodListing implements Serializable {
 
   public String getAccountId() {
     return this.accountId;
+  }
+
+  public ClientProfile getClient() {
+	return this.client;
   }
 
   public String getFoodType() {

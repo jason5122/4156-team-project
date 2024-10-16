@@ -1,15 +1,18 @@
 package dev.coms4156.project.teamproject.controller;
 
-import dev.coms4156.project.teamproject.repository.FoodListingRepository;
-import dev.coms4156.project.teamproject.model.FoodListing;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import dev.coms4156.project.teamproject.model.ClientProfile;
+import dev.coms4156.project.teamproject.model.FoodListing;
+import dev.coms4156.project.teamproject.repository.FoodListingRepository;
 
 /**
  * This class contains all the API routes for the system.
@@ -23,6 +26,7 @@ public class RouteController {
      * API endpoint to create a new food listing.
      *
      * @param accountId ID of the account creating the listing
+	 * @param client ClientProfile
      * @param foodType Type of the food
      * @param quantityListed Quantity of food available
      * @param latitude Latitude of the food's location
@@ -31,11 +35,12 @@ public class RouteController {
      */
     @PostMapping("/createFoodListing")
     public @ResponseBody
-    String createFoodListing(@RequestParam String accountId, @RequestParam String foodType,
+    String createFoodListing(@RequestParam String accountId, @RequestParam ClientProfile client,
+                             @RequestParam String foodType,
                              @RequestParam int quantityListed, @RequestParam float latitude,
                              @RequestParam float longitude) {
 
-        FoodListing foodListing = new FoodListing(accountId, foodType, quantityListed,
+        FoodListing foodListing = new FoodListing(accountId, client, foodType, quantityListed,
                                                   LocalDateTime.now(), latitude, longitude);
 
         foodListingRepository.save(foodListing);

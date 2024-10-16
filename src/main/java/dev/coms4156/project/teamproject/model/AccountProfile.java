@@ -3,15 +3,34 @@ package dev.coms4156.project.teamproject.model;
 import java.io.Serial;
 import java.io.Serializable;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
 /**
  * Represents an account profile for users of the service.
  * An account can either be a provider profile or a recipient profile.
  */
+@Entity
 public class AccountProfile implements Serializable {
 
   @Serial
   private static final long serialVersionUID = 123456L;
-  private final String accountId;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "account_id", updatable = false, nullable = false)
+  private int accountId;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)  
+  @JoinColumn(name = "client", nullable = false)  
+  private ClientProfile client;
+
   private final AccountType accountType;
   private String phoneNumber;
   private String name;
@@ -32,9 +51,9 @@ public class AccountProfile implements Serializable {
    * @param phoneNumber phone number for contact (validated for length)
    * @param name name associated with the account
    */
-  public AccountProfile(String accountId, AccountType accountType, 
+  public AccountProfile(ClientProfile client, AccountType accountType, 
       String phoneNumber, String name) {
-    this.accountId = accountId;
+    this.client = client;
     this.accountType = accountType;
     // [TODO] Check if phoneNumber string is only digits
     if (phoneNumber == null || !(phoneNumber.length() == 10 || phoneNumber.length() == 11)) {
@@ -52,7 +71,7 @@ public class AccountProfile implements Serializable {
    *
    * @return The account ID.
    */
-  public String getAccountId() {
+  public int getAccountId() {
     return accountId;
   }
 
@@ -81,6 +100,10 @@ public class AccountProfile implements Serializable {
    */
   public String getName() {
     return name;
+  }
+
+  public ClientProfile getClient() {
+    return client;
   }
 
   /**
