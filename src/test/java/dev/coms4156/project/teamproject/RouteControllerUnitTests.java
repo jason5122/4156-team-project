@@ -1,18 +1,18 @@
 package dev.coms4156.project.teamproject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.coms4156.project.teamproject.repository.FoodListingRepository;
+import dev.coms4156.project.teamproject.controller.FoodListingRepository;
+import dev.coms4156.project.teamproject.model.FoodListing;
+import dev.coms4156.project.teamproject.view.RouteController;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.BeforeAll;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-public class RouteControllerIntegrationTests {
+public class RouteControllerUnitTests {
 
   @Autowired
   private RouteController routeController;
@@ -41,6 +41,13 @@ public class RouteControllerIntegrationTests {
         30, LocalDateTime.of(2024, 10, 7, 16, 30),
         78.122f, 120.281f);
     foodListingRepository.save(foodListing2);
+  }
+
+  public void saveFoodListing3() {
+    FoodListing foodListing3 = new FoodListing("acc3", "rice",
+        30, LocalDateTime.of(2024, 10, 8, 14, 00),
+        33.989f, -118.243f);
+    foodListingRepository.save(foodListing3);
   }
 
   @BeforeEach
@@ -73,7 +80,7 @@ public class RouteControllerIntegrationTests {
     saveFoodListing1();
     saveFoodListing2();
 
-    ResponseEntity<?> response = routeController.getFoodListings();
+    ResponseEntity<List<FoodListing>> response = routeController.getFoodListings();
     String expected1 = "FoodListing{accountId='acc1', foodType=snack, "
         + "quantityListed=25, earliestPickUpTime=2024-10-06 11:00:00, "
         + "latitude=34.052, longitude=-118.243}";
@@ -84,7 +91,7 @@ public class RouteControllerIntegrationTests {
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
-    List<FoodListing> foodListings = (List<FoodListing>) response.getBody();
+    List<FoodListing> foodListings = response.getBody();
     assert(foodListings.size() == 2);
     for (FoodListing listing: foodListings) {
       assert(expected.contains(listing.toString()));
@@ -96,5 +103,51 @@ public class RouteControllerIntegrationTests {
     // Test with empty repository
     ResponseEntity<?> response = routeController.getFoodListings();
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void getNearbyListingsZeroFoundTest() {
+    saveFoodListing1();
+    saveFoodListing2();
+
+    ResponseEntity<?> response = routeController.getNearbyListings(
+        30.000f, -100.000f, 10);
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void getNearbyListingsOneFoundTest() {
+    saveFoodListing1();
+    saveFoodListing2();
+
+    ResponseEntity<List<FoodListing>> response = routeController.getNearbyListings(
+        34.060f, -118.250f, 10);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    List<FoodListing> listingsFound = response.getBody();
+    assert(listingsFound.size() == 1);
+    assertEquals("acc1", listingsFound.get(0).getAccountId());
+
+    ResponseEntity<List<FoodListing>> response2 = routeController.getNearbyListings(
+        78.121f, 120.282f, 10);
+    assertEquals(HttpStatus.OK, response2.getStatusCode());
+    List<FoodListing> listingsFound2 = response2.getBody();
+    assert(listingsFound2.size() == 1);
+    assertEquals("acc2", listingsFound2.get(0).getAccountId());
+  }
+
+  @Test
+  public void getNearbyListingsTwoFoundTest() {
+    saveFoodListing1();
+    saveFoodListing3();
+
+    ResponseEntity<List<FoodListing>> response = routeController.getNearbyListings(
+        34.021f, -118.243f, 10);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    List<FoodListing> listingsFound = response.getBody();
+    assertEquals(2, listingsFound.size());
+    Set<String> expected = Set.of("acc1", "acc3");
+    for (FoodListing listing: listingsFound) {
+      assert(expected.contains(listing.getAccountId()));
+    }
   }
 }

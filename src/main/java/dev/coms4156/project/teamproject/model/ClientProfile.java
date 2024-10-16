@@ -13,9 +13,7 @@ public class ClientProfile implements Serializable {
    * Constructs a new Client object with the given parameters.
    *
    */
-  public ClientProfile(int clientId) {
-    this.clientId = clientId;
-  }
+  public ClientProfile(int clientId) { this.clientId = clientId; }
 
   public int getClientId() {
     return this.clientId;
