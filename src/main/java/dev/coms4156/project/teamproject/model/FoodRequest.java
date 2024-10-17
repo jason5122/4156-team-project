@@ -96,16 +96,4 @@ public class FoodRequest implements Serializable {
   public void setPickupTime(LocalDateTime pickupTime) {
     this.pickupTime = pickupTime;
   }
-
-  @Override
-  public String toString() {
-    return "FoodRequest{" 
-           + "requestId='" + requestId + '\'' 
-           + ", listingId=" + listingId 
-           + ", accountId='" + accountId + '\'' 
-           + ", quantityRequested=" + quantityRequested
-           + ", requestTime=" + requestTime 
-           + ", pickupTime=" + pickupTime 
-           + '}';
-  }
 }

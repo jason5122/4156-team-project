@@ -4,6 +4,7 @@ import dev.coms4156.project.teamproject.model.AccountProfile;
 import dev.coms4156.project.teamproject.model.ClientProfile;
 import dev.coms4156.project.teamproject.model.FoodListing;
 import dev.coms4156.project.teamproject.model.Location;
+import dev.coms4156.project.teamproject.repository.AccountProfileRepository;
 import dev.coms4156.project.teamproject.repository.ClientProfileRepository;
 import dev.coms4156.project.teamproject.repository.FoodListingRepository;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FoodListingController {
     @Autowired private FoodListingRepository foodListingRepository;
     @Autowired private ClientProfileRepository clientProfileRepository;
-    @Autowired private ClientProfileController clientProfileController;
+    @Autowired private AccountProfileRepository accountProfileRepository;
 
     /**
      * API endpoint to create a new food listing.
@@ -46,22 +48,17 @@ public class FoodListingController {
      */
     @PostMapping("/createFoodListing")
     public ResponseEntity<?> createFoodListing(
-        @RequestParam String accountId, @RequestParam String clientId,
+        @RequestParam int clientId, @RequestParam int accountId,
         @RequestParam String foodType, @RequestParam int quantityListed,
         @RequestParam float latitude, @RequestParam float longitude) {
 
-        ResponseEntity<?> clientQueryResult = clientProfileController.getClientProfile(clientId);
-        if (!(clientQueryResult.getBody() instanceof ClientProfile)) {
-            return clientQueryResult;
+        Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
+        Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId);
+        if (!clientOptional.isPresent() && !accountOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        ResponseEntity<?> accountQueryResult = clientProfileController.getClientProfile(clientId);
-        if (!(accountQueryResult.getBody() instanceof AccountProfile)) {
-            return accountQueryResult;
-        }
-        ClientProfile client = (ClientProfile) clientQueryResult.getBody();
-        AccountProfile account = (AccountProfile) accountQueryResult.getBody();
 
-        FoodListing foodListing = new FoodListing(client, account, foodType, quantityListed,
+        FoodListing foodListing = new FoodListing(clientOptional.get(), accountOptional.get(), foodType, quantityListed,
             LocalDateTime.now(), latitude, longitude);
 
         FoodListing savedFoodListing = foodListingRepository.save(foodListing);

@@ -4,7 +4,11 @@ import dev.coms4156.project.teamproject.model.AccountProfile;
 import dev.coms4156.project.teamproject.model.ClientProfile;
 import dev.coms4156.project.teamproject.repository.AccountProfileRepository;
 import dev.coms4156.project.teamproject.repository.ClientProfileRepository;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,14 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/accountProfiles")
 public class AccountProfileController {
 
-    private final AccountProfileRepository accountProfileRepository;
-    private final ClientProfileRepository clientProfileRepository;
-
-    public AccountProfileController(AccountProfileRepository accountProfileRepository,
-                                    ClientProfileRepository clientProfileRepository) {
-        this.accountProfileRepository = accountProfileRepository;
-        this.clientProfileRepository = clientProfileRepository;
-    }
+    @Autowired private ClientProfileRepository clientProfileRepository;
+    @Autowired private AccountProfileRepository accountProfileRepository;
 
     @PostMapping("/create")
     public ResponseEntity<AccountProfile>
@@ -42,22 +40,19 @@ public class AccountProfileController {
         return new ResponseEntity<>(accountProfile, HttpStatus.CREATED);
     }
 
-    @GetMapping("/getAccountProfile")
-    public ResponseEntity<?> getAccountProfile(@RequestParam String accountId) {
-        int accountId_;
-        try {
-            accountId_ = Integer.parseInt(accountId);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                "Expected accountId to be in integer form, got " + accountId + " instead.");
+    @GetMapping("/get")
+    public ResponseEntity<?> getAccountProfile(@RequestParam int accountId) {
+        Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId);
+        if (!accountOptional.isPresent()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Account ID not found.");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
 
-        Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId_);
-
-        if (accountOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok().body(accountOptional.get());
-        }
+        AccountProfile account = accountOptional.get();
+        Map<String, Object> body = new HashMap<>();
+        body.put("account_id", account.getAccountId());
+        body.put("name", account.getName());
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 }
