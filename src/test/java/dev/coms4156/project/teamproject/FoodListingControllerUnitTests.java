@@ -117,6 +117,17 @@ public class FoodListingControllerUnitTests {
   }
 
   @Test
+  public void createFoodListingMissingClientTest() {
+    ResponseEntity<?> response = foodListingController.createFoodListing(
+        111, 222,
+        "kiwi", 10,
+        34.052f, -118.244f);
+
+    // Check status code
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
   public void getFoodListingNoneFoundTest() {
     // Test with empty repository
     ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
@@ -397,6 +408,80 @@ public class FoodListingControllerUnitTests {
     FoodListing expected3 = makeFoodListing3(client, account);
     Set<FoodListing> expectedSet = Set.of(expected1, expected3);
     for (FoodListing listing: listingsFound) {
+      assert(expectedSet.contains(listing));
+    }
+  }
+
+  @Test
+  public void getFoodListingsUnderAccountMissingClientTest() {
+    ResponseEntity<?> response = foodListingController.getFoodListingsUnderAccount(
+        111, 222);
+
+    // Check status code
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void getFoodListingsUnderAccountNoneFoundTest() {
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    ResponseEntity<AccountProfile> accountProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "x");
+    AccountProfile account = accountProfile.getBody();
+    assert account != null;
+    int accountId = account.getAccountId();
+
+    ResponseEntity<AccountProfile> accountProfile2 = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "x");
+    AccountProfile account2 = accountProfile2.getBody();
+
+    // Save listings under account 2, then should find no listings when querying account 1
+    saveFoodListing1(client, account2);
+    saveFoodListing2(client, account2);
+    saveFoodListing3(client, account2);
+
+    // Check status code
+    ResponseEntity<?> response = foodListingController.getFoodListingsUnderAccount(
+        clientId, accountId);
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void getFoodListingsUnderAccountSomeFoundTest() {
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    ResponseEntity<AccountProfile> accountProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "x");
+    AccountProfile account = accountProfile.getBody();
+    assert account != null;
+    int accountId = account.getAccountId();
+
+    // Save listings under account 2, then should find no listings when querying account 1
+    saveFoodListing1(client, account);
+    saveFoodListing2(client, account);
+    saveFoodListing3(client, account);
+
+    // Check status code
+    ResponseEntity<?> response = foodListingController.getFoodListingsUnderAccount(
+        clientId, accountId);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    // Check body
+    @SuppressWarnings("unchecked") // suppress warning for unchecked cast...
+    List<FoodListing> foodListings = (List<FoodListing>) response.getBody();
+    assert(Objects.requireNonNull(foodListings).size() == 3);
+
+    FoodListing expected1 = makeFoodListing1(client, account);
+    FoodListing expected2 = makeFoodListing2(client, account);
+    FoodListing expected3 = makeFoodListing3(client, account);
+    Set<FoodListing> expectedSet = Set.of(expected1, expected2, expected3);
+
+    for (FoodListing listing: foodListings) {
       assert(expectedSet.contains(listing));
     }
   }

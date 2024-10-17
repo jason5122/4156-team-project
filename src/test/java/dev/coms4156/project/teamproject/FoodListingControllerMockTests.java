@@ -45,7 +45,7 @@ public class FoodListingControllerMockTests {
   }
 
   @Test
-  public void createFoodListingFailureTest() {
+  public void createFoodListingSavedWrongFoodTypeTest() {
     ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
     ClientProfile client = clientProfile.getBody();
     assert client != null;
@@ -64,7 +64,99 @@ public class FoodListingControllerMockTests {
 
     // Mock foodListingRepository to return wrong food listing when we save something to it
     FoodListingRepository mockedFoodListingRepository = Mockito.mock(FoodListingRepository.class);
-//    when(foodListingRepository.save(any(FoodListing.class))).thenReturn(differentFoodListing);
+    doReturn(differentFoodListing).when(foodListingRepository).save(any());
+
+    ResponseEntity<?> response = foodListingController.createFoodListing(
+        clientId, accountId,
+        "kiwi", 10,
+        34.052f, -118.244f);
+
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    assertEquals("Failed to create food listing", response.getBody());
+  }
+
+  @Test
+  public void createFoodListingSavedWrongQuantityTest() {
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    ResponseEntity<AccountProfile> accountProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "x");
+    AccountProfile account = accountProfile.getBody();
+    assert account != null;
+    int accountId = account.getAccountId();
+
+    // Create wrong food listing that will trigger Exception
+    FoodListing differentFoodListing = new FoodListing(
+        client, account, "kiwi", 999,
+        LocalDateTime.now(), 122.100f, 88.118f);
+
+    // Mock foodListingRepository to return wrong food listing when we save something to it
+    FoodListingRepository mockedFoodListingRepository = Mockito.mock(FoodListingRepository.class);
+    doReturn(differentFoodListing).when(foodListingRepository).save(any());
+
+    ResponseEntity<?> response = foodListingController.createFoodListing(
+        clientId, accountId,
+        "kiwi", 10,
+        34.052f, -118.244f);
+
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    assertEquals("Failed to create food listing", response.getBody());
+  }
+
+  @Test
+  public void createFoodListingSavedWrongLatitudeTest() {
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    ResponseEntity<AccountProfile> accountProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "x");
+    AccountProfile account = accountProfile.getBody();
+    assert account != null;
+    int accountId = account.getAccountId();
+
+    // Create wrong food listing that will trigger Exception
+    FoodListing differentFoodListing = new FoodListing(
+        client, account, "kiwi", 10,
+        LocalDateTime.now(), 122.100f, 88.118f);
+
+    // Mock foodListingRepository to return wrong food listing when we save something to it
+    FoodListingRepository mockedFoodListingRepository = Mockito.mock(FoodListingRepository.class);
+    doReturn(differentFoodListing).when(foodListingRepository).save(any());
+
+    ResponseEntity<?> response = foodListingController.createFoodListing(
+        clientId, accountId,
+        "kiwi", 10,
+        34.052f, -118.244f);
+
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    assertEquals("Failed to create food listing", response.getBody());
+  }
+
+  @Test
+  public void createFoodListingSavedWrongLongitudeTest() {
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    ResponseEntity<AccountProfile> accountProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "x");
+    AccountProfile account = accountProfile.getBody();
+    assert account != null;
+    int accountId = account.getAccountId();
+
+    // Create wrong food listing that will trigger Exception
+    FoodListing differentFoodListing = new FoodListing(
+        client, account, "kiwi", 999,
+        LocalDateTime.now(), 34.052f, 88.118f);
+
+    // Mock foodListingRepository to return wrong food listing when we save something to it
+    FoodListingRepository mockedFoodListingRepository = Mockito.mock(FoodListingRepository.class);
     doReturn(differentFoodListing).when(foodListingRepository).save(any());
 
     ResponseEntity<?> response = foodListingController.createFoodListing(
