@@ -1,9 +1,5 @@
 package dev.coms4156.project.teamproject.model;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Access;
 import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;
@@ -15,7 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.format.DateTimeFormatter;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 
 /**
@@ -124,5 +123,29 @@ public class FoodListing implements Serializable {
 
   public void setLongitude(float longitude) {
     this.longitude = longitude;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    System.out.println("IN EQUALS");
+    if (!(other instanceof FoodListing otherListing)) {
+      return false;
+    }
+
+    System.out.println(this.earliestPickUpTime);
+    System.out.println(((FoodListing) other).getEarliestPickUpTime());
+
+    return ((FoodListing) other).getFoodType().equals(this.foodType)
+          && this.quantityListed == otherListing.getQuantityListed()
+          && this.earliestPickUpTime.toString().equals(otherListing.getEarliestPickUpTime().toString())
+          && this.latitude == otherListing.getLatitude()
+          && this.longitude == otherListing.getLongitude();
+
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(client, account, foodType, quantityListed, earliestPickUpTime,
+        latitude, longitude);
   }
 }
