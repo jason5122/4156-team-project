@@ -9,7 +9,9 @@ import dev.coms4156.project.teamproject.repository.ClientProfileRepository;
 import dev.coms4156.project.teamproject.repository.FoodListingRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +57,14 @@ public class FoodListingController {
         Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
         Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId);
         if (!clientOptional.isPresent() && !accountOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Client ID or account ID not found.");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
 
-        FoodListing foodListing = new FoodListing(clientOptional.get(), accountOptional.get(), foodType, quantityListed,
+        ClientProfile client = clientOptional.get();
+        AccountProfile account = accountOptional.get();
+        FoodListing foodListing = new FoodListing(client, account, foodType, quantityListed,
             LocalDateTime.now(), latitude, longitude);
 
         FoodListing savedFoodListing = foodListingRepository.save(foodListing);
@@ -87,11 +93,16 @@ public class FoodListingController {
      *    Otherwise, a ResponseEntity with status code NOT_FOUND.
      */
     @GetMapping("/getFoodListings")
-    public ResponseEntity<?> getFoodListings(@RequestParam String clientId) {
-        // Find all listings under client with `clientId`
-        int clientId_ = Integer.parseInt(clientId);
-        List<FoodListing> listings = foodListingRepository.findByClient_ClientId(clientId_);
+    public ResponseEntity<?> getFoodListings(@RequestParam int clientId) {
+        Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
+        if (!clientOptional.isPresent()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Client ID or account ID not found.");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
 
+        ClientProfile client = clientOptional.get();
+        List<FoodListing> listings = foodListingRepository.findByClient(client);
         if (!listings.isEmpty()) {
             return ResponseEntity.ok().body(listings);
         } else {
@@ -113,13 +124,19 @@ public class FoodListingController {
      *           listings are found, or 404 NOT_FOUND otherwise.
      */
     @GetMapping("/getNearbyListings")
-    public ResponseEntity<List<FoodListing>> getNearbyListings(@RequestParam String clientId,
+    public ResponseEntity<?> getNearbyListings(@RequestParam int clientId,
         @RequestParam float latitude, @RequestParam float longitude,
         @RequestParam(required = false, defaultValue = "5") int maxDistance) {
 
-        // Find all listings under client with `clientId`
-        int clientId_ = Integer.parseInt(clientId);
-        List<FoodListing> allListings = foodListingRepository.findByClient_ClientId(clientId_);
+        Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
+        if (!clientOptional.isPresent()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Client ID or account ID not found.");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+
+        ClientProfile client = clientOptional.get();
+        List<FoodListing> allListings = foodListingRepository.findByClient(client);
 
         // Then find listings within `maxDistance` of query location
         List<FoodListing> nearbyListings = new ArrayList<>();
@@ -152,20 +169,25 @@ public class FoodListingController {
      *          Otherwise, a ResponseEntity with status code NOT_FOUND.
      */
     @GetMapping("/getFoodListingsUnderAccount")
-    public ResponseEntity<?> getFoodListingsUnderAccount(@RequestParam String clientId,
-                                                         @RequestParam String accountId) {
-        // Find all listings under client with `clientId`
-        // int clientId_ = Integer.parseInt(clientId);
-        // List<FoodListing> accountListings = foodListingRepository.findByClient_ClientIdAndAccountId(
-        //     clientId_, accountId
-        // );
+    public ResponseEntity<?> getFoodListingsUnderAccount(@RequestParam int clientId,
+                                                         @RequestParam int accountId) {
 
-        // if (!(accountListings.isEmpty())) {
-        //     return ResponseEntity.ok().body(accountListings);
-        // } else {
-        //     return ResponseEntity.notFound().build();
-        // }
-        return ResponseEntity.notFound().build();
+        Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
+        Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId);
+        if (!clientOptional.isPresent() && !accountOptional.isPresent()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Client ID or account ID not found.");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+
+        ClientProfile client = clientOptional.get();
+        AccountProfile account = accountOptional.get();
+        List<FoodListing> accountListings = foodListingRepository.findByClientAndAccount(client, account);
+        if (!accountListings.isEmpty()) {
+            return ResponseEntity.ok().body(accountListings);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**
