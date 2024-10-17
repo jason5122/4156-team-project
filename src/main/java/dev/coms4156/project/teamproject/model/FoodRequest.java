@@ -21,6 +21,9 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class FoodRequest implements Serializable {
 
+  @Serial
+  private static final long serialVersionUID = 345678L;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "request_id", unique = true)
@@ -30,9 +33,10 @@ public class FoodRequest implements Serializable {
   @JoinColumn(name = "client_id", nullable = false)  
   private ClientProfile client;
 
-  @Serial
-  private static final long serialVersionUID = 345678L;
-  private final int listingId;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "listing_id", nullable = false)
+  private FoodListing foodListing;
+
   private final String accountId;
   private int quantityRequested;
   private final LocalDateTime requestTime;
@@ -41,13 +45,13 @@ public class FoodRequest implements Serializable {
   /**
    * Constructs a new FoodRequest object.
    *
-   * @param listingId ID of the food listing being requested
+   * @param foodListing ID of the food listing being requested
    * @param accountId ID of the account (user) making the request
    * @param client client for whom this account is being created
    * @param quantityRequested Quantity of the food requested
    */
-  public FoodRequest(int listingId, String accountId, ClientProfile client, int quantityRequested) {
-    this.listingId = listingId;
+  public FoodRequest(FoodListing foodListing, String accountId, ClientProfile client, int quantityRequested) {
+    this.foodListing = foodListing;
     this.accountId = accountId;
     this.client = client;
     this.quantityRequested = quantityRequested;
@@ -72,8 +76,8 @@ public class FoodRequest implements Serializable {
     return requestId;
   }
 
-  public int getListingId() {
-    return listingId;
+  public FoodListing getListing() {
+    return foodListing;
   }
 
   public String getAccountId() {

@@ -27,8 +27,8 @@ public class AccountProfile implements Serializable {
   @Column(name = "account_id", updatable = false, nullable = false)
   private int accountId;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)  
-  @JoinColumn(name = "client_id", nullable = false)  
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "client_id", nullable = false)
   private ClientProfile client;
 
   private final AccountType accountType;
