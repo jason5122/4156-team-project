@@ -1,5 +1,6 @@
 package dev.coms4156.project.teamproject.controller;
 
+import dev.coms4156.project.teamproject.model.AccountProfile;
 import dev.coms4156.project.teamproject.model.ClientProfile;
 import dev.coms4156.project.teamproject.model.FoodListing;
 import dev.coms4156.project.teamproject.model.Location;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FoodListingController {
     @Autowired private FoodListingRepository foodListingRepository;
     @Autowired private ClientProfileRepository clientProfileRepository;
+    @Autowired private ClientProfileController clientProfileController;
 
     /**
      * API endpoint to create a new food listing.
@@ -47,19 +50,22 @@ public class FoodListingController {
         @RequestParam String foodType, @RequestParam int quantityListed,
         @RequestParam float latitude, @RequestParam float longitude) {
 
-        // Get client under `clientId`
-        ResponseEntity<?> queryResult = getClientProfile(clientId);
-        if (!(queryResult.getBody() instanceof ClientProfile client)) {
-            return queryResult;
+        ResponseEntity<?> clientQueryResult = clientProfileController.getClientProfile(clientId);
+        if (!(clientQueryResult.getBody() instanceof ClientProfile)) {
+            return clientQueryResult;
         }
+        ResponseEntity<?> accountQueryResult = clientProfileController.getClientProfile(clientId);
+        if (!(accountQueryResult.getBody() instanceof AccountProfile)) {
+            return accountQueryResult;
+        }
+        ClientProfile client = (ClientProfile) clientQueryResult.getBody();
+        AccountProfile account = (AccountProfile) accountQueryResult.getBody();
 
-        FoodListing foodListing = new FoodListing(accountId, client, foodType, quantityListed,
+        FoodListing foodListing = new FoodListing(client, account, foodType, quantityListed,
             LocalDateTime.now(), latitude, longitude);
 
         FoodListing savedFoodListing = foodListingRepository.save(foodListing);
-
-        if (savedFoodListing.getAccountId().equals(accountId)
-            && savedFoodListing.getFoodType().equals(foodType)
+        if (savedFoodListing.getFoodType().equals(foodType)
             && savedFoodListing.getQuantityListed() == quantityListed
             && savedFoodListing.getLatitude() == latitude
             && savedFoodListing.getLongitude() == longitude) {
@@ -77,7 +83,8 @@ public class FoodListingController {
      * Otherwise, returns a ResponseEntity with status code
      * INTERNAL_SERVER_ERROR and an error message.
      *
-     * @param clientId ID of client to filter the food listings for
+     * @param clientId ID of client to filter the food listings for,
+     *                 assumed to be an integer
      * @return A ResponseEntity with status code OK and
      *    a collection of food listings if there is at least one listing in the database.
      *    Otherwise, a ResponseEntity with status code NOT_FOUND.
@@ -136,6 +143,35 @@ public class FoodListingController {
     }
 
     /**
+     * API endpoint to get all food listings under the account with `accountId`
+     * for the client under `clientId`
+     *
+     * @param clientId ID of client to filter the food listings for,
+     *                 assumed to be an integer
+     * @param accountId ID of account to fetch food listings for
+     * @return A ResponseEntity with status code OK and
+     *          a collection of food listings if there is at least one listing under `accountId`
+     *          for the client with `clientId`.
+     *          Otherwise, a ResponseEntity with status code NOT_FOUND.
+     */
+    @GetMapping("/getFoodListingsUnderAccount")
+    public ResponseEntity<?> getFoodListingsUnderAccount(@RequestParam String clientId,
+                                                         @RequestParam String accountId) {
+        // Find all listings under client with `clientId`
+        // int clientId_ = Integer.parseInt(clientId);
+        // List<FoodListing> accountListings = foodListingRepository.findByClient_ClientIdAndAccountId(
+        //     clientId_, accountId
+        // );
+
+        // if (!(accountListings.isEmpty())) {
+        //     return ResponseEntity.ok().body(accountListings);
+        // } else {
+        //     return ResponseEntity.notFound().build();
+        // }
+        return ResponseEntity.notFound().build();
+    }
+
+    /**
      * Redirects to the homepage.
      *
      * @return A String containing the name of the html file to be loaded.
@@ -148,21 +184,4 @@ public class FoodListingController {
             + ".1:8080/endpoint?arg=value";
     }
 
-    private ResponseEntity<?> getClientProfile(String clientId) {
-        int clientId_;
-        try {
-            clientId_ = Integer.parseInt(clientId);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Expected clientId to be in integer form, got "
-                + clientId + " instead.");
-        }
-
-        Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId_);
-
-        if (clientOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok().body(clientOptional.get());
-        }
-    }
 }

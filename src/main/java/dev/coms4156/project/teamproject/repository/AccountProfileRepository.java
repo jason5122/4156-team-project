@@ -6,4 +6,4 @@ import org.springframework.stereotype.Repository;
 import dev.coms4156.project.teamproject.model.AccountProfile;
 
 @Repository
-public interface AccountProfileRepository extends JpaRepository<AccountProfile, String> {}
+public interface AccountProfileRepository extends JpaRepository<AccountProfile, Integer> {}
