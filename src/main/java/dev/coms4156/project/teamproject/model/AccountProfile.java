@@ -19,9 +19,6 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class AccountProfile implements Serializable {
 
-  @Serial
-  private static final long serialVersionUID = 123456L;
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "account_id", updatable = false, nullable = false)
@@ -31,7 +28,7 @@ public class AccountProfile implements Serializable {
   @JoinColumn(name = "client_id", nullable = false)
   private ClientProfile client;
 
-  private final AccountType accountType;
+  private AccountType accountType;
   private String phoneNumber;
   private String name;
 
@@ -42,6 +39,8 @@ public class AccountProfile implements Serializable {
     PROVIDER,
     RECIPIENT
   }
+
+  public AccountProfile() {}
 
   /**
    * Constructs a new Account Profile object.
@@ -106,20 +105,5 @@ public class AccountProfile implements Serializable {
 
   public ClientProfile getClient() {
     return client;
-  }
-
-  /**
-   * Provides a formatted string representing the account profile details.
-   *
-   * @return A string with account profile details.
-   */
-  @Override
-  public String toString() {
-    return "AccountProfile{" 
-           + "accountId='" + accountId + '\'' 
-           + ", accountType=" + accountType 
-           + ", phoneNumber='" + phoneNumber + '\'' 
-           + ", name='" + name + '\'' 
-           + '}';
   }
 }

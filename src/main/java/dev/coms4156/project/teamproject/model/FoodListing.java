@@ -125,16 +125,4 @@ public class FoodListing implements Serializable {
   public void setLongitude(float longitude) {
     this.longitude = longitude;
   }
-
-  public String toString() {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    String formattedPickUpTime = earliestPickUpTime.format(formatter);
-    return "FoodListing{"
-        + ", foodType=" + foodType
-        + ", quantityListed=" + quantityListed
-        + ", earliestPickUpTime=" + formattedPickUpTime
-        + ", latitude=" + String.format("%.3f", latitude)
-        + ", longitude=" + String.format("%.3f", longitude)
-        + '}';
-  }
 }
