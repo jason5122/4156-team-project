@@ -38,8 +38,9 @@ public class FoodListing implements Serializable {
   @JoinColumn(name = "client_id", nullable = false)  
   private ClientProfile client;
 
-  @Column(name = "account_id", nullable = false)
-  private String accountId;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "account_id", nullable = false)
+  private AccountProfile account;
 
   @Column(name = "food_type")
   private String foodType;
@@ -62,31 +63,23 @@ public class FoodListing implements Serializable {
   /**
    * Constructs a food listing object with the given parameters.
    *
-   * @param accountId Account id of the provider who listed the food
    * @param client ClientProfile 
+   * @param account account of the provider who listed the food
    * @param foodType Type of food
    * @param quantityListed Quantity of food in bags
    * @param earliestPickUpTime Earliest pick up time for the food listing
    * @param latitude latitude of the pick up location
    * @param longitude longitude of the pick up location
    */
-  public FoodListing(String accountId, ClientProfile client, String foodType, int quantityListed, 
+  public FoodListing(ClientProfile client, AccountProfile account, String foodType, int quantityListed, 
         LocalDateTime earliestPickUpTime, float latitude, float longitude) {
-    this.accountId = accountId;
-	this.client = client;
+  	this.client = client;
+    this.account = account;
     this.foodType = foodType;
     this.quantityListed = quantityListed;
     this.earliestPickUpTime = earliestPickUpTime;
     this.latitude = latitude;
     this.longitude = longitude;
-  }
-
-  public String getAccountId() {
-    return this.accountId;
-  }
-
-  public ClientProfile getClient() {
-	return this.client;
   }
 
   public String getFoodType() {
