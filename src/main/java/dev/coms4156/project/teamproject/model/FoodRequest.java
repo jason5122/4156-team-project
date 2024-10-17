@@ -5,18 +5,35 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
 /**
  * Represents a Food Request made by an account (user) 
  * of a client (app) for a specific food listing.
  */
+@Entity
 public class FoodRequest implements Serializable {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "request_id", unique = true)
+  private int requestId;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)  
+  @JoinColumn(name = "client_id", nullable = false)  
+  private ClientProfile client;
 
   @Serial
   private static final long serialVersionUID = 345678L;
-  private final String requestId;
   private final int listingId;
   private final String accountId;
-  private final String clientId;
   private int quantityRequested;
   private final LocalDateTime requestTime;
   private LocalDateTime pickupTime;
@@ -26,16 +43,15 @@ public class FoodRequest implements Serializable {
    *
    * @param listingId ID of the food listing being requested
    * @param accountId ID of the account (user) making the request
-   * @param clientId ID of the client (app) making the API call
+   * @param client client for whom this account is being created
    * @param quantityRequested Quantity of the food requested
    */
-  public FoodRequest(int listingId, String accountId, String clientId, int quantityRequested) {
+  public FoodRequest(int listingId, String accountId, ClientProfile client, int quantityRequested) {
     this.listingId = listingId;
     this.accountId = accountId;
-    this.clientId = clientId;
+    this.client = client;
     this.quantityRequested = quantityRequested;
     this.requestTime = LocalDateTime.now();  // Automatically set to current time
-    this.requestId = genRequestId(clientId, accountId);
   }
 
   /**
@@ -52,7 +68,7 @@ public class FoodRequest implements Serializable {
     return clientId + "_" + accountId + "_" + timestamp;
   }
 
-  public String getRequestId() {
+  public int getRequestId() {
     return requestId;
   }
 
@@ -64,8 +80,8 @@ public class FoodRequest implements Serializable {
     return accountId;
   }
 
-  public String getClientId() {
-    return clientId;
+  public ClientProfile getClient() {
+    return client;
   }
 
   public int getQuantityRequested() {
@@ -94,7 +110,6 @@ public class FoodRequest implements Serializable {
            + "requestId='" + requestId + '\'' 
            + ", listingId=" + listingId 
            + ", accountId='" + accountId + '\'' 
-           + ", clientId='" + clientId + '\''
            + ", quantityRequested=" + quantityRequested
            + ", requestTime=" + requestTime 
            + ", pickupTime=" + pickupTime 
