@@ -25,26 +25,26 @@ public class ClientProfileController {
     @PostMapping("/create")
     public ResponseEntity<ClientProfile> createClientProfile() {
 		ClientProfile client = new ClientProfile();
-        clientProfileRepository.save(client);
-        return new ResponseEntity<>(client, HttpStatus.CREATED);
+      clientProfileRepository.save(client);
+      return new ResponseEntity<>(client, HttpStatus.CREATED);
     }
 
     @GetMapping("/getClientProfile")
     public ResponseEntity<?> getClientProfile(@RequestParam String clientId) {
-        int clientId_;
-        try {
-          clientId_ = Integer.parseInt(clientId);
-        } catch (Exception e) {
-          return ResponseEntity.badRequest().body("Expected clientId to be in integer form, got "
-              + clientId + " instead.");
-        }
+      int clientId_;
+      try {
+        clientId_ = Integer.parseInt(clientId);
+      } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Expected clientId to be in integer form, got "
+            + clientId + " instead.");
+      }
 
-        Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId_);
+      Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId_);
 
-        if (clientOptional.isEmpty()) {
-          return ResponseEntity.notFound().build();
-        } else {
-          return ResponseEntity.ok().body(clientOptional.get());
-        }
+      if (clientOptional.isEmpty()) {
+        return ResponseEntity.notFound().build();
+      } else {
+        return ResponseEntity.ok().body(clientOptional.get());
+      }
     }
 }

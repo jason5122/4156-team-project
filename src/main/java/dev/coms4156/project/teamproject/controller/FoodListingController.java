@@ -1,5 +1,6 @@
 package dev.coms4156.project.teamproject.controller;
 
+import dev.coms4156.project.teamproject.model.AccountProfile;
 import dev.coms4156.project.teamproject.model.ClientProfile;
 import dev.coms4156.project.teamproject.model.FoodListing;
 import dev.coms4156.project.teamproject.model.Location;
@@ -49,19 +50,22 @@ public class FoodListingController {
         @RequestParam String foodType, @RequestParam int quantityListed,
         @RequestParam float latitude, @RequestParam float longitude) {
 
-        // Get client under `clientId`
-        ResponseEntity<?> queryResult = clientProfileController.getClientProfile(clientId);
-        if (!(queryResult.getBody() instanceof ClientProfile client)) {
-            return queryResult;
+        ResponseEntity<?> clientQueryResult = clientProfileController.getClientProfile(clientId);
+        if (!(clientQueryResult.getBody() instanceof ClientProfile)) {
+            return clientQueryResult;
         }
+        ResponseEntity<?> accountQueryResult = clientProfileController.getClientProfile(clientId);
+        if (!(accountQueryResult.getBody() instanceof AccountProfile)) {
+            return accountQueryResult;
+        }
+        ClientProfile client = (ClientProfile) clientQueryResult.getBody();
+        AccountProfile account = (AccountProfile) accountQueryResult.getBody();
 
-        FoodListing foodListing = new FoodListing(accountId, client, foodType, quantityListed,
+        FoodListing foodListing = new FoodListing(client, account, foodType, quantityListed,
             LocalDateTime.now(), latitude, longitude);
 
         FoodListing savedFoodListing = foodListingRepository.save(foodListing);
-
-        if (savedFoodListing.getAccountId().equals(accountId)
-            && savedFoodListing.getFoodType().equals(foodType)
+        if (savedFoodListing.getFoodType().equals(foodType)
             && savedFoodListing.getQuantityListed() == quantityListed
             && savedFoodListing.getLatitude() == latitude
             && savedFoodListing.getLongitude() == longitude) {
@@ -154,16 +158,17 @@ public class FoodListingController {
     public ResponseEntity<?> getFoodListingsUnderAccount(@RequestParam String clientId,
                                                          @RequestParam String accountId) {
         // Find all listings under client with `clientId`
-        int clientId_ = Integer.parseInt(clientId);
-        List<FoodListing> accountListings = foodListingRepository.findByClient_ClientIdAndAccountId(
-            clientId_, accountId
-        );
+        // int clientId_ = Integer.parseInt(clientId);
+        // List<FoodListing> accountListings = foodListingRepository.findByClient_ClientIdAndAccountId(
+        //     clientId_, accountId
+        // );
 
-        if (!(accountListings.isEmpty())) {
-            return ResponseEntity.ok().body(accountListings);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        // if (!(accountListings.isEmpty())) {
+        //     return ResponseEntity.ok().body(accountListings);
+        // } else {
+        //     return ResponseEntity.notFound().build();
+        // }
+        return ResponseEntity.notFound().build();
     }
 
     /**

@@ -130,7 +130,6 @@ public class FoodListing implements Serializable {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     String formattedPickUpTime = earliestPickUpTime.format(formatter);
     return "FoodListing{"
-        + "accountId='" + accountId + "'"
         + ", foodType=" + foodType
         + ", quantityListed=" + quantityListed
         + ", earliestPickUpTime=" + formattedPickUpTime
