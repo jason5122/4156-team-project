@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -238,7 +239,8 @@ public class FoodListingController {
 
         if (listingOptional.isEmpty()) {
             Map<String, Object> body = new HashMap<>();
-            body.put("error", "Listing ID not found.");
+            body.put("error", "Listing with ID " + listingId + " not found"
+                + "under client with ID " + clientId + " and account with ID " + accountId + ".");
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
 
@@ -253,6 +255,148 @@ public class FoodListingController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    /**
+     * API endpoint for fulfilling a request with the listing created by account with `accountId`
+     * under client with `clientId`. Expects the account to be a provider.
+     * Updates the listing by decrementing `quantityListed` by `quantityRequested`
+     * if it is provided or 1 otherwise. If current `quantityListed` is less
+     * than`quantityRequested`, returns a response with status code BAD_REQUEST.
+     *
+     * @param clientId ID of the client that the account is under
+     * @param accountId ID of the account of the provider who wishes to update their listing
+     * @param listingId ID of the listing that the provider wishes to update
+     * @return A ResponseEntity with status code OK if the listing was successfully updated
+     *          or status code BAD_REQUEST otherwise. If there is no entry associated with
+     *          `clientId`, `accountId`, and `listingId`, returns a ResponseEntity with
+     *          status code NOT_FOUND.
+     */
+    @PatchMapping("/fulfillRequest")
+    public ResponseEntity<?> fulfillRequest(
+        @RequestParam int clientId, @RequestParam int accountId, @RequestParam int listingId,
+        @RequestParam(required = false, defaultValue = "1") int quantityRequested) {
+
+        // Fetch client and account data from database
+        Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
+        Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId);
+        if (clientOptional.isEmpty() || accountOptional.isEmpty()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Client ID or account ID not found.");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+
+        ClientProfile client = clientOptional.get();
+        AccountProfile account = accountOptional.get();
+
+        // Only a provider should be calling this endpoint
+        if (account.getAccountType() != AccountProfile.AccountType.PROVIDER) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Expected account holder to be a PROVIDER.");
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        }
+
+        // Find the listing that will satisfy a request
+        Optional<FoodListing> listingOptional =
+            foodListingRepository.findByClientAndAccountAndListingId(client, account, listingId);
+        if (listingOptional.isEmpty()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Listing with ID " + listingId + " not found "
+                + "under client with ID " + clientId + " and account with ID " + accountId + ".");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+
+        // Do the actual update now that we found the correct listing
+        FoodListing listing = listingOptional.get();
+        int currQuantityListed = listing.getQuantityListed();
+        if (currQuantityListed < quantityRequested) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Quantity listed (" + currQuantityListed + ") for listing with ID "
+                + listingId + " cannot satisfy quantity requested (" + quantityRequested + ").");
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        }
+        int newQuantityListed = currQuantityListed - quantityRequested;
+        listing.setQuantityListed(newQuantityListed);
+        foodListingRepository.save(listing);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", "Updated Successfully.");
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
+
+    /**
+     * API endpoint for updating the fields of a listing
+     * with `listingId` created by account with `accountId` under client with `clientId`.
+     * Expects account to be a provider.
+     *
+     * @param clientId ID of client
+     * @param accountId ID of account under the client
+     * @param listingId ID of listing to update
+     * @param newFoodType optional parameter for new food type
+     * @param newLatitude optional parameter for new latitude
+     * @param newLongitude optional parameter for new longitude
+     * @param newQuantityListed optional parameter for new quantity listed
+     * @return A ResponseEntity with status code OK and a message if the listing
+     *          was successfully updated. If there is no listing with `listingId` associated
+     *          with `clientId` and `accountId`, returns a ResponseEntity with NOT_FOUND.
+     */
+    @PatchMapping("/updateFoodListing")
+    public ResponseEntity<?> updateFoodListing(
+        @RequestParam int clientId, @RequestParam int accountId, @RequestParam int listingId,
+        @RequestParam(required = false) String newFoodType,
+        @RequestParam(required = false) Float newLatitude,
+        @RequestParam(required = false) Float newLongitude,
+        @RequestParam(required = false) Integer newQuantityListed
+        ) {
+
+        // Fetch client and account data from database
+        Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
+        Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId);
+        if (clientOptional.isEmpty() || accountOptional.isEmpty()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Client ID or account ID not found.");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+
+        ClientProfile client = clientOptional.get();
+        AccountProfile account = accountOptional.get();
+
+        // Only a provider should be calling this endpoint
+        if (account.getAccountType() != AccountProfile.AccountType.PROVIDER) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Expected account holder to be a PROVIDER.");
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        }
+
+        // Find the specified listing
+        Optional<FoodListing> listingOptional =
+            foodListingRepository.findByClientAndAccountAndListingId(client, account, listingId);
+        if (listingOptional.isEmpty()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Listing with ID " + listingId + " not found "
+                + "under client with ID " + clientId + " and account with ID " + accountId + ".");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+
+        FoodListing listing = listingOptional.get();
+        if (newFoodType != null) {
+            listing.setFoodType(newFoodType);
+        }
+        if (newLatitude != null) {
+            listing.setLatitude(newLatitude);
+        }
+        if (newLongitude != null) {
+            listing.setLongitude(newLongitude);
+        }
+        if (newQuantityListed != null) {
+            listing.setQuantityListed(newQuantityListed);
+        }
+
+        foodListingRepository.save(listing);
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", "Updated Successfully.");
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
+
 
     /**
      * Redirects to the homepage.
