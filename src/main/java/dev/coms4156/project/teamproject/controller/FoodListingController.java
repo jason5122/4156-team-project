@@ -72,7 +72,8 @@ public class FoodListingController {
             && savedFoodListing.getQuantityListed() == quantityListed
             && savedFoodListing.getLatitude() == latitude
             && savedFoodListing.getLongitude() == longitude) {
-            return ResponseEntity.ok().body("Food listing created successfully with ID: "
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body("Food listing created successfully with ID: "
                 + savedFoodListing.getListingId());
         } else {
             return ResponseEntity.internalServerError().body("Failed to create food listing");
