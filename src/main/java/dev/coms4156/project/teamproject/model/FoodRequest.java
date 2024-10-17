@@ -34,10 +34,13 @@ public class FoodRequest implements Serializable {
   private ClientProfile client;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "account_id", nullable = false)
+  private AccountProfile account;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "listing_id", nullable = false)
   private FoodListing foodListing;
 
-  private final String accountId;
   private int quantityRequested;
   private final LocalDateTime requestTime;
   private LocalDateTime pickupTime;
@@ -45,31 +48,17 @@ public class FoodRequest implements Serializable {
   /**
    * Constructs a new FoodRequest object.
    *
-   * @param foodListing ID of the food listing being requested
-   * @param accountId ID of the account (user) making the request
    * @param client client for whom this account is being created
+   * @param account the account (user) making the request
+   * @param foodListing the food listing being requested
    * @param quantityRequested Quantity of the food requested
    */
-  public FoodRequest(FoodListing foodListing, String accountId, ClientProfile client, int quantityRequested) {
-    this.foodListing = foodListing;
-    this.accountId = accountId;
+  public FoodRequest(ClientProfile client, AccountProfile account, FoodListing foodListing, int quantityRequested) {
     this.client = client;
+    this.account = account;
+    this.foodListing = foodListing;
     this.quantityRequested = quantityRequested;
     this.requestTime = LocalDateTime.now();  // Automatically set to current time
-  }
-
-  /**
-   * Generates a unique request ID based on the client ID, account ID, and current timestamp.
-   *
-   * @param clientId The ID of the client (app) making the API call.
-   * @param accountId The ID of the account (user) making the request.
-   * @return A unique request ID.
-   */
-  public static String genRequestId(String clientId, String accountId) {
-    LocalDateTime current = LocalDateTime.now();
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-    String timestamp = current.format(formatter);
-    return clientId + "_" + accountId + "_" + timestamp;
   }
 
   public int getRequestId() {
@@ -80,8 +69,8 @@ public class FoodRequest implements Serializable {
     return foodListing;
   }
 
-  public String getAccountId() {
-    return accountId;
+  public AccountProfile getAccountId() {
+    return account;
   }
 
   public ClientProfile getClient() {

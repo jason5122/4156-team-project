@@ -5,54 +5,73 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
 /**
  * Represents a donation.
  */
+@Entity
 public class Donation implements Serializable {
+
   @Serial
   private static final long serialVersionUID = 234567L;
-  private final String accountId;
-  private final int listingId;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "donation_id", unique = true)
+  private int donationId;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)  
+  @JoinColumn(name = "client_id", nullable = false)  
+  private ClientProfile client;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "account_id", nullable = false)
+  private AccountProfile account;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "listing_id", nullable = false)
+  private FoodListing foodListing;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "request_id", nullable = false)
+  private FoodRequest foodRequest;
+
   private int quantityPickedUp;
   private LocalDateTime pickUpTime;
-  private final String donationId;
 
   /**
    * Creates a new donation object with the given params.
    *
-   * @param accountId Account id of the provider who put up the foodListing
-   * @param listingId Id of the food listing referenced by the donation
+   * @param account the account of the provider who put up the foodListing
+   * @param client client for whom this account is being created
+   * @param foodListing the food listing referenced by the donation
    * @param pickUpTime Pick up time of the donation
    * @param quantityPickedUp Quantity of the food listing pick up
    */
-  public Donation(String accountId, int listingId, int quantityPickedUp, 
+  public Donation(ClientProfile client, AccountProfile account, FoodListing foodListing, FoodRequest foodRequest, int quantityPickedUp, 
         LocalDateTime pickUpTime) {
-    this.accountId = accountId;
-    this.listingId = listingId;
+    this.client = client;
+    this.account = account;
+    this.foodListing = foodListing;
+    this.foodRequest = foodRequest;
     this.quantityPickedUp = quantityPickedUp;
     this.pickUpTime = pickUpTime;
-    this.donationId = genDonationId(accountId);
   }
 
-  /**
-   * Generates a unique donation ID to use. 
-   *
-   * @return String representing a unique donation from the account.
-   */
-  public static String genDonationId(String accountId) {
-    LocalDateTime current = LocalDateTime.now();
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-    String timestamp = current.format(formatter);
-
-    return accountId + timestamp;
-  }
-
-  public String getDonationId() {
+  public int getDonationId() {
     return donationId;
   }
 
-  public int getListingId() {
-    return listingId;
+  public FoodListing getFoodListing() {
+    return foodListing;
   }
 
   public int getQuantityPickedUp() {
@@ -61,10 +80,6 @@ public class Donation implements Serializable {
 
   public LocalDateTime getPickUpTime() {
     return pickUpTime;
-  }
-
-  public String getAccountId() {
-    return accountId;
   }
 
   public void setPickUpTime(LocalDateTime pickUpTime) {
