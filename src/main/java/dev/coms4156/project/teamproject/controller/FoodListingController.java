@@ -1,12 +1,16 @@
 package dev.coms4156.project.teamproject.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import dev.coms4156.project.teamproject.model.AccountProfile;
 import dev.coms4156.project.teamproject.model.ClientProfile;
 import dev.coms4156.project.teamproject.model.FoodListing;
+import dev.coms4156.project.teamproject.model.FoodRequest;
 import dev.coms4156.project.teamproject.model.Location;
 import dev.coms4156.project.teamproject.repository.AccountProfileRepository;
 import dev.coms4156.project.teamproject.repository.ClientProfileRepository;
 import dev.coms4156.project.teamproject.repository.FoodListingRepository;
+import dev.coms4156.project.teamproject.repository.FoodRequestRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +35,7 @@ public class FoodListingController {
     @Autowired private FoodListingRepository foodListingRepository;
     @Autowired private ClientProfileRepository clientProfileRepository;
     @Autowired private AccountProfileRepository accountProfileRepository;
+    @Autowired private FoodRequestRepository foodRequestRepository;
 
     /**
      * API endpoint to create a new food listing.
@@ -56,7 +61,7 @@ public class FoodListingController {
 
         Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
         Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId);
-        if (!clientOptional.isPresent() && !accountOptional.isPresent()) {
+        if (clientOptional.isEmpty() || accountOptional.isEmpty()) {
             Map<String, Object> body = new HashMap<>();
             body.put("error", "Client ID or account ID not found.");
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
@@ -87,8 +92,7 @@ public class FoodListingController {
      * Otherwise, returns a ResponseEntity with status code
      * INTERNAL_SERVER_ERROR and an error message.
      *
-     * @param clientId ID of client to filter the food listings for,
-     *                 assumed to be an integer
+     * @param clientId ID of client to filter the food listings for
      * @return A ResponseEntity with status code OK and
      *    a collection of food listings if there is at least one listing in the database.
      *    Otherwise, a ResponseEntity with status code NOT_FOUND.
@@ -96,7 +100,7 @@ public class FoodListingController {
     @GetMapping("/getFoodListings")
     public ResponseEntity<?> getFoodListings(@RequestParam int clientId) {
         Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
-        if (!clientOptional.isPresent()) {
+        if (clientOptional.isEmpty()) {
             Map<String, Object> body = new HashMap<>();
             body.put("error", "Client ID or account ID not found.");
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
@@ -130,7 +134,7 @@ public class FoodListingController {
         @RequestParam(required = false, defaultValue = "5") int maxDistance) {
 
         Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
-        if (!clientOptional.isPresent()) {
+        if (clientOptional.isEmpty()) {
             Map<String, Object> body = new HashMap<>();
             body.put("error", "Client ID or account ID not found.");
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
@@ -161,8 +165,7 @@ public class FoodListingController {
      * API endpoint to get all food listings under the account with `accountId`
      * for the client under `clientId`
      *
-     * @param clientId ID of client to filter the food listings for,
-     *                 assumed to be an integer
+     * @param clientId ID of client to filter the food listings for
      * @param accountId ID of account to fetch food listings for
      * @return A ResponseEntity with status code OK and
      *          a collection of food listings if there is at least one listing under `accountId`
@@ -175,7 +178,7 @@ public class FoodListingController {
 
         Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
         Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId);
-        if (!clientOptional.isPresent() && !accountOptional.isPresent()) {
+        if (clientOptional.isEmpty() || accountOptional.isEmpty()) {
             Map<String, Object> body = new HashMap<>();
             body.put("error", "Client ID or account ID not found.");
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
@@ -186,6 +189,66 @@ public class FoodListingController {
         List<FoodListing> accountListings = foodListingRepository.findByClientAndAccount(client, account);
         if (!accountListings.isEmpty()) {
             return ResponseEntity.ok().body(accountListings);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     *  API endpoint for fetching the requests made by recipients using
+     *  a client with `clientId` for a listing created by a provider
+     *  with an account with `accountId` under the same client with `clientId`.
+     *
+     * @param clientId ID of client to filter the food listings for
+     * @param accountId ID of account to fetch food listings for
+     * @param listingId ID of listing to find requests for
+     * @return If there is no listing with `listingId`
+     *      that was created by a provider associated with `clientId` or `accountId`,
+     *      a ResponseEntity with status code NOT_FOUND.
+     *      Else if at least one request has been made for the specified listing,
+     *      a ResponseEntity with status code ok and a collection of requests.
+     *      Else, a ResponseEntity with status code NOT_FOUND otherwise.
+     */
+    @GetMapping("/getRequestsForListing")
+    public ResponseEntity<?> getRequestsForListing(
+        @RequestParam int clientId, @RequestParam int accountId, @RequestParam int listingId) {
+
+        Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
+        Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId);
+        if (clientOptional.isEmpty() || accountOptional.isEmpty()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Client ID or account ID not found.");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+
+        ClientProfile client = clientOptional.get();
+        AccountProfile account = accountOptional.get();
+
+        // Only a provider should be calling this endpoint
+        if (account.getAccountType() != AccountProfile.AccountType.PROVIDER) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Expected account holder to be a PROVIDER.");
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        }
+
+        // Find the listing that the provider wishes to see all requests for
+        Optional<FoodListing> listingOptional =
+            foodListingRepository.findByClientAndAccountAndListingId(
+            client, account, listingId);
+
+        if (listingOptional.isEmpty()) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("error", "Listing ID not found.");
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+
+        FoodListing listing = listingOptional.get();
+        // Find requests for this listing under the same client
+        List<FoodRequest> requestsForListing =
+            foodRequestRepository.findByClientAndFoodListing(client, listing);
+
+        if (!requestsForListing.isEmpty()) {
+            return ResponseEntity.ok().body(requestsForListing);
         } else {
             return ResponseEntity.notFound().build();
         }

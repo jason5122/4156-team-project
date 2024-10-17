@@ -127,20 +127,15 @@ public class FoodListing implements Serializable {
 
   @Override
   public boolean equals(Object other) {
-    System.out.println("IN EQUALS");
     if (!(other instanceof FoodListing otherListing)) {
       return false;
     }
-
-    System.out.println(this.earliestPickUpTime);
-    System.out.println(((FoodListing) other).getEarliestPickUpTime());
 
     return ((FoodListing) other).getFoodType().equals(this.foodType)
           && this.quantityListed == otherListing.getQuantityListed()
           && this.earliestPickUpTime.toString().equals(otherListing.getEarliestPickUpTime().toString())
           && this.latitude == otherListing.getLatitude()
           && this.longitude == otherListing.getLongitude();
-
   }
 
   @Override
