@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.util.Objects;
 
 /**
  * Represents a Food Request made by an account (user) 
@@ -87,5 +88,22 @@ public class FoodRequest implements Serializable {
 
   public LocalDateTime getRequestTime() {
     return requestTime;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (!(other instanceof FoodRequest otherListing)) {
+      return false;
+    }
+
+    return this.requestId == otherListing.getRequestId()
+        && this.foodListing.equals(otherListing.getListing())
+        && this.quantityRequested == otherListing.getQuantityRequested()
+        && this.requestTime.toString().equals(otherListing.getRequestTime().toString());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(requestId, client, account, quantityRequested, requestTime);
   }
 }
