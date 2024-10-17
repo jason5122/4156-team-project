@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FoodListingRepository extends JpaRepository<FoodListing, Integer> {
   public List<FoodListing> findByClient_ClientId(int clientId);
+  public List<FoodListing> findByClient_ClientIdAndAccountId(int clientId, String accountId);
 }
