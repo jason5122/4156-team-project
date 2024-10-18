@@ -1,13 +1,9 @@
 package dev.coms4156.project.teamproject.controller;
 
-import dev.coms4156.project.teamproject.model.AccountProfile;
-import dev.coms4156.project.teamproject.model.ClientProfile;
-import dev.coms4156.project.teamproject.repository.AccountProfileRepository;
-import dev.coms4156.project.teamproject.repository.ClientProfileRepository;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.coms4156.project.teamproject.model.AccountProfile;
+import dev.coms4156.project.teamproject.model.ClientProfile;
+import dev.coms4156.project.teamproject.repository.AccountProfileRepository;
+import dev.coms4156.project.teamproject.repository.ClientProfileRepository;
+
+/**
+ * Controller for managing account profiles.
+ * 
+ * This controller provides API endpoints to create and retrieve 
+ * account profiles, which represent individual user accounts under a client.
+ */
 @RestController
 @RequestMapping("/api/accountProfiles")
 public class AccountProfileController {
@@ -24,6 +31,19 @@ public class AccountProfileController {
     @Autowired private ClientProfileRepository clientProfileRepository;
     @Autowired private AccountProfileRepository accountProfileRepository;
 
+    /**
+     * Creates a new AccountProfile for a specific client.
+     * 
+     * This endpoint creates a new account profile associated with a client, 
+     * including details such as the account type, phone number, and name.
+     * 
+     * @param clientId the ID of the client associated with the account profile
+     * @param accountType the type of the account (e.g., PROVIDER or RECIPIENT)
+     * @param phoneNumber the phone number associated with the account
+     * @param name the name of the account holder
+     * @return a ResponseEntity containing the created AccountProfile and HTTP status code 201,
+     *         or a 404 Not Found if the client ID is not found
+     */
     @PostMapping("/create")
     public ResponseEntity<AccountProfile>
     createAccountProfile(@RequestParam int clientId,
@@ -40,6 +60,15 @@ public class AccountProfileController {
         return new ResponseEntity<>(accountProfile, HttpStatus.CREATED);
     }
 
+    /**
+     * Retrieves an AccountProfile by account ID.
+     * 
+     * This endpoint fetches the details of an account profile using the provided account ID.
+     * 
+     * @param accountId the ID of the account profile to retrieve
+     * @return a ResponseEntity containing the account profile details and HTTP status code 200,
+     *         or an error message and HTTP status code 404 if the account ID is not found
+     */
     @GetMapping("/get")
     public ResponseEntity<?> getAccountProfile(@RequestParam int accountId) {
         Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId);
