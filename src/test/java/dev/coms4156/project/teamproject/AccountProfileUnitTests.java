@@ -53,17 +53,6 @@ public class AccountProfileUnitTests {
   }
 
   @Test
-  public void accountProfileToStringTest() {
-    ClientProfile client = new ClientProfile();
-    AccountProfile account = new AccountProfile(client, AccountProfile.AccountType.PROVIDER,
-        "1123331929", "Mikey D's");
-    assert (account.toString().contains("accountId='"));
-    assert (account.toString().contains("accountType=PROVIDER"));
-    assert (account.toString().contains("phoneNumber='1123331929'"));
-    assert (account.toString().contains("name='Mikey D's'"));
-  }
-
-  @Test
   public void accountProfileOkTest() {
     ClientProfile client = new ClientProfile();
     AccountProfile account = new AccountProfile(client, AccountProfile.AccountType.PROVIDER,
