@@ -9,6 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
+/**
+ * Unit tests for the AccountProfile class.
+ *
+ * <p>These tests validate the behavior of AccountProfile-related API operations.
+ */
 @SpringBootTest
 @ContextConfiguration
 public class AccountProfileUnitTests {

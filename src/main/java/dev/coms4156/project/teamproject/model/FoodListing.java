@@ -33,8 +33,8 @@ public class FoodListing implements Serializable {
   @Column(name = "listing_id", unique = true)
   private int listingId;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)  
-  @JoinColumn(name = "client_id", nullable = false)  
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "client_id", nullable = false)
   private ClientProfile client;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -52,32 +52,34 @@ public class FoodListing implements Serializable {
 
   @Column(name = "latitude")
   private float latitude;
-  
+
   @Column(name = "longitude")
   private float longitude;
 
   /**
-   * Default constructor for the FoodListing class.
-   * This constructor is required by JPA for object instantiation.
-   * We suppress the warning since the PMD default ruleset does not comply with this.
+   * Default constructor for the FoodListing class. This constructor is required by JPA for object
+   * instantiation. We suppress the warning since the PMD default ruleset does not comply with
+   * this.
    */
   @SuppressWarnings("PMD.UncommentedEmptyConstructor")
-  public FoodListing() {}
+  public FoodListing() {
+  }
 
   /**
    * Constructs a food listing object with the given parameters.
    *
-   * @param client ClientProfile 
-   * @param account account of the provider who listed the food
-   * @param foodType Type of food
-   * @param quantityListed Quantity of food in bags
+   * @param client             ClientProfile
+   * @param account            account of the provider who listed the food
+   * @param foodType           Type of food
+   * @param quantityListed     Quantity of food in bags
    * @param earliestPickUpTime Earliest pick up time for the food listing
-   * @param latitude latitude of the pick up location
-   * @param longitude longitude of the pick up location
+   * @param latitude           latitude of the pick up location
+   * @param longitude          longitude of the pick up location
    */
-  public FoodListing(ClientProfile client, AccountProfile account, String foodType, int quantityListed, 
-        LocalDateTime earliestPickUpTime, float latitude, float longitude) {
-  	this.client = client;
+  public FoodListing(ClientProfile client, AccountProfile account, String foodType,
+      int quantityListed,
+      LocalDateTime earliestPickUpTime, float latitude, float longitude) {
+    this.client = client;
     this.account = account;
     this.foodType = foodType;
     this.quantityListed = quantityListed;
@@ -90,44 +92,44 @@ public class FoodListing implements Serializable {
     return this.foodType;
   }
 
+  public void setFoodType(String foodType) {
+    this.foodType = foodType;
+  }
+
   public int getQuantityListed() {
     return this.quantityListed;
-  }
-
-  public LocalDateTime getEarliestPickUpTime() {
-    return this.earliestPickUpTime;
-  }
-
-  public float getLatitude() {
-    return this.latitude;
-  }
-
-  public float getLongitude() {
-    return this.longitude;
-  }
-
-  public int getListingId() {
-    return this.listingId;
   }
 
   public void setQuantityListed(int quantityListed) {
     this.quantityListed = quantityListed;
   }
 
+  public LocalDateTime getEarliestPickUpTime() {
+    return this.earliestPickUpTime;
+  }
+
   public void setEarliestPickUpTime(LocalDateTime earliestPickUpTime) {
     this.earliestPickUpTime = earliestPickUpTime;
   }
 
-  public void setFoodType(String foodType) {
-    this.foodType = foodType;
+  public float getLatitude() {
+    return this.latitude;
   }
 
   public void setLatitude(float latitude) {
     this.latitude = latitude;
   }
 
+  public float getLongitude() {
+    return this.longitude;
+  }
+
   public void setLongitude(float longitude) {
     this.longitude = longitude;
+  }
+
+  public int getListingId() {
+    return this.listingId;
   }
 
   @Override
@@ -137,10 +139,11 @@ public class FoodListing implements Serializable {
     }
 
     return ((FoodListing) other).getFoodType().equals(this.foodType)
-          && this.quantityListed == otherListing.getQuantityListed()
-          && this.earliestPickUpTime.toString().equals(otherListing.getEarliestPickUpTime().toString())
-          && this.latitude == otherListing.getLatitude()
-          && this.longitude == otherListing.getLongitude();
+        && this.quantityListed == otherListing.getQuantityListed()
+        && this.earliestPickUpTime.toString()
+        .equals(otherListing.getEarliestPickUpTime().toString())
+        && this.latitude == otherListing.getLatitude()
+        && this.longitude == otherListing.getLongitude();
   }
 
   @Override

@@ -1,7 +1,5 @@
 package dev.coms4156.project.teamproject.model;
 
-import java.io.Serializable;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,10 +8,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.io.Serializable;
 
 /**
- * Represents an account profile for users of the service.
- * An account can either be a provider profile or a recipient profile.
+ * Represents an account profile for users of the service. An account can either be a provider
+ * profile or a recipient profile.
  */
 @Entity
 public class AccountProfile implements Serializable {
@@ -32,30 +31,23 @@ public class AccountProfile implements Serializable {
   private String name;
 
   /**
-   * Enum for specifying whether the account is a food provider or a recipient.
-   */
-  public enum AccountType {
-    PROVIDER,
-    RECIPIENT
-  }
-
-  /**
-   * Default constructor for the FoodListing class.
-   * This constructor is required by JPA for object instantiation.
-   * We suppress the warning since the PMD default ruleset does not comply with this.
+   * Default constructor for the FoodListing class. This constructor is required by JPA for object
+   * instantiation. We suppress the warning since the PMD default ruleset does not comply with
+   * this.
    */
   @SuppressWarnings("PMD.UncommentedEmptyConstructor")
-  public AccountProfile() {}
+  public AccountProfile() {
+  }
 
   /**
    * Constructs a new Account Profile object.
    *
-   * @param client client for whom this account is being created
+   * @param client      client for whom this account is being created
    * @param accountType type of account (provider or recipient)
    * @param phoneNumber phone number for contact (validated for length)
-   * @param name name associated with the account
+   * @param name        name associated with the account
    */
-  public AccountProfile(ClientProfile client, AccountType accountType, 
+  public AccountProfile(ClientProfile client, AccountType accountType,
       String phoneNumber, String name) {
     this.client = client;
     this.accountType = accountType;
@@ -110,5 +102,13 @@ public class AccountProfile implements Serializable {
 
   public ClientProfile getClient() {
     return client;
+  }
+
+  /**
+   * Enum for specifying whether the account is a food provider or a recipient.
+   */
+  public enum AccountType {
+    PROVIDER,
+    RECIPIENT
   }
 }

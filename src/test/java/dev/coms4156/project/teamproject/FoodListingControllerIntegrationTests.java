@@ -22,16 +22,28 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Integration tests for the FoodListingController class.
+ *
+ * <p>This class tests various operations related to food listings, such as
+ * creating listings, making requests for listings, etc.
+ */
 @DataJpaTest
 @Import({FoodListingController.class,
     ClientProfileController.class,
     AccountProfileController.class})
 public class FoodListingControllerIntegrationTests {
-  @Autowired private FoodListingController foodListingController;
-  @Autowired private FoodListingRepository foodListingRepository;
-  @Autowired private FoodRequestRepository foodRequestRepository;
-  @Autowired private ClientProfileController clientProfileController;
-  @Autowired private AccountProfileController accountProfileController;
+
+  @Autowired
+  private FoodListingController foodListingController;
+  @Autowired
+  private FoodListingRepository foodListingRepository;
+  @Autowired
+  private FoodRequestRepository foodRequestRepository;
+  @Autowired
+  private ClientProfileController clientProfileController;
+  @Autowired
+  private AccountProfileController accountProfileController;
 
   private FoodListing saveListing1(ClientProfile client, AccountProfile account) {
     FoodListing listing1 = new FoodListing(client, account, "snack",
@@ -41,14 +53,14 @@ public class FoodListingControllerIntegrationTests {
   }
 
   private FoodListing saveListing2(ClientProfile client, AccountProfile account) {
-    FoodListing listing2 = new FoodListing( client, account, "beverage",
+    FoodListing listing2 = new FoodListing(client, account, "beverage",
         30, LocalDateTime.of(2024, 10, 7, 16, 30),
         78.122f, 120.281f);
     return foodListingRepository.save(listing2);
   }
 
   private FoodRequest requestListing(ClientProfile client, AccountProfile account,
-                                         FoodListing listing, int quantityRequested) {
+      FoodListing listing, int quantityRequested) {
     FoodRequest foodRequest = new FoodRequest(client, account, listing, quantityRequested);
     return foodRequestRepository.save(foodRequest);
   }
@@ -77,7 +89,7 @@ public class FoodListingControllerIntegrationTests {
     FoodListing listing1 = saveListing1(client, providerAccount);
     int listingId = listing1.getListingId();
     // Send request for listing
-    requestListing(client, recipientAccount,listing1, 1);
+    requestListing(client, recipientAccount, listing1, 1);
 
     // No client has this ID
     int badClientId = client.getClientId() + 2;
@@ -111,7 +123,7 @@ public class FoodListingControllerIntegrationTests {
     FoodListing listing1 = saveListing1(client, providerAccount);
     int listingId = listing1.getListingId();
     // Send request for listing
-    requestListing(client, recipientAccount,listing1, 1);
+    requestListing(client, recipientAccount, listing1, 1);
 
     // No account has this ID
     int badProviderId = providerId + 2;
@@ -144,7 +156,7 @@ public class FoodListingControllerIntegrationTests {
     FoodListing listing1 = saveListing1(client, providerAccount);
     int listingId = listing1.getListingId();
     // Send request for listing
-    requestListing(client, recipientAccount,listing1, 1);
+    requestListing(client, recipientAccount, listing1, 1);
 
     // Try to call this endpoint as a recipient type account
     ResponseEntity<?> response = foodListingController.getRequestsForListing(
@@ -176,7 +188,7 @@ public class FoodListingControllerIntegrationTests {
     FoodListing listing1 = saveListing1(client, providerAccount);
     int listingId = listing1.getListingId(); // default is 1
     // Send request for listing
-    requestListing(client, recipientAccount,listing1, 1);
+    requestListing(client, recipientAccount, listing1, 1);
 
     // No listing has this ID
     int badListingId = listingId + 2;
@@ -209,11 +221,10 @@ public class FoodListingControllerIntegrationTests {
     // Create listing
     FoodListing listing1 = saveListing1(client, providerAccount);
     // Send request for this listing
-    requestListing(client, recipientAccount,listing1, 1);
+    requestListing(client, recipientAccount, listing1, 1);
     // Create another listing with no requests; query this listing
     FoodListing listing2 = saveListing2(client, providerAccount);
     int queryListingId = listing2.getListingId();
-
 
     ResponseEntity<?> response = foodListingController.getRequestsForListing(
         clientId, providerId, queryListingId);
@@ -241,15 +252,16 @@ public class FoodListingControllerIntegrationTests {
     AccountProfile recipientAccount = recipientProfile.getBody();
 
     // Create another recipient account
-    ResponseEntity<AccountProfile> recipientProfile2 = accountProfileController.createAccountProfile(
-        clientId, AccountProfile.AccountType.RECIPIENT, "1234567892", "r2");
+    ResponseEntity<AccountProfile> recipientProfile2 = accountProfileController
+        .createAccountProfile(clientId, AccountProfile.AccountType.RECIPIENT,
+            "1234567892", "r2");
     AccountProfile recipientAccount2 = recipientProfile2.getBody();
 
     // Create listing
     FoodListing listing1 = saveListing1(client, providerAccount);
     int queryListingId = listing1.getListingId();
     // Send request for this listing
-    FoodRequest request1 = requestListing(client, recipientAccount,listing1, 1);
+    FoodRequest request1 = requestListing(client, recipientAccount, listing1, 1);
     FoodRequest request2 = requestListing(client, recipientAccount, listing1, 2);
     FoodRequest request3 = requestListing(client, recipientAccount2, listing1, 3);
 
@@ -260,11 +272,11 @@ public class FoodListingControllerIntegrationTests {
     // Check body
     @SuppressWarnings("unchecked") // suppress warning for unchecked cast...
     List<FoodRequest> requests = (List<FoodRequest>) response.getBody();
-    assert(Objects.requireNonNull(requests).size() == 3);
+    assert (Objects.requireNonNull(requests).size() == 3);
     Set<FoodRequest> expectedRequests = Set.of(request1, request2, request3);
 
-    for (FoodRequest request: requests) {
-      assert(expectedRequests.contains(request));
+    for (FoodRequest request : requests) {
+      assert (expectedRequests.contains(request));
     }
   }
 }

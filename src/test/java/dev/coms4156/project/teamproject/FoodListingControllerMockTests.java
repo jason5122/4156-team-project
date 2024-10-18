@@ -22,6 +22,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
+/**
+ * Mock tests for FoodListingController.
+ *
+ * <p>These tests consider cases where wrong data is returned from
+ * the repository during the creation of food listings, and makes sure that the
+ * controller handles errors appropriately.
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 public class FoodListingControllerMockTests {
