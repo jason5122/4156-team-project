@@ -1,6 +1,7 @@
 package dev.coms4156.project.teamproject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import dev.coms4156.project.teamproject.controller.AccountProfileController;
 import dev.coms4156.project.teamproject.controller.ClientProfileController;
@@ -12,6 +13,7 @@ import dev.coms4156.project.teamproject.repository.FoodListingRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -120,6 +122,23 @@ public class FoodListingControllerUnitTests {
   public void createFoodListingMissingClientTest() {
     ResponseEntity<?> response = foodListingController.createFoodListing(
         111, 222,
+        "kiwi", 10,
+        34.052f, -118.244f);
+
+    // Check status code
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void createFoodListingMissingAccountTest() {
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+
+    ResponseEntity<?> response = foodListingController.createFoodListing(
+        clientId, 222,
         "kiwi", 10,
         34.052f, -118.244f);
 
@@ -422,6 +441,20 @@ public class FoodListingControllerUnitTests {
   }
 
   @Test
+  public void getFoodListingsUnderAccountMissingAccountTest() {
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    ResponseEntity<?> response = foodListingController.getFoodListingsUnderAccount(
+        clientId, 222);
+
+    // Check status code
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
   public void getFoodListingsUnderAccountNoneFoundTest() {
     ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
     ClientProfile client = clientProfile.getBody();
@@ -483,6 +516,480 @@ public class FoodListingControllerUnitTests {
 
     for (FoodListing listing: foodListings) {
       assert(expectedSet.contains(listing));
+    }
+  }
+
+  @Test
+  public void fulfillRequestMissingClientTest() {
+    ResponseEntity<?> response = foodListingController.fulfillRequest(
+        111, 1, 1, 1);
+
+    // Check status code
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void fulfillRequestMissingAccountTest() {
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    ResponseEntity<?> response = foodListingController.fulfillRequest(
+        clientId, 1, 1, 1);
+
+    // Check status code
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void fulfillRequestMissingListingIdTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+    assert providerAccount != null;
+    int providerId = providerAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing = new FoodListing(client, providerAccount, "beverage",
+        30, LocalDateTime.of(2024, 10, 7, 16, 30),
+        78.122f, 120.281f);
+    foodListingRepository.save(listing);
+    int badListingId = listing.getListingId() + 2; // No listing has this ID
+
+    ResponseEntity<?> response = foodListingController.fulfillRequest(
+        clientId, providerId, badListingId, 1);
+
+    // Check status code
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void fulfillRequestOkTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+    assert providerAccount != null;
+    int providerId = providerAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing = new FoodListing(client, providerAccount, "beverage",
+        30, LocalDateTime.of(2024, 10, 7, 16, 30),
+        78.122f, 120.281f);
+    FoodListing savedListing = foodListingRepository.save(listing);
+    int listingId = savedListing.getListingId();
+
+    ResponseEntity<?> response = foodListingController.fulfillRequest(
+        clientId, providerId, listingId, 30);
+
+    // Check status code
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+  }
+
+  @Test
+  public void fulfillRequestBadRequestTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+    assert providerAccount != null;
+    int providerId = providerAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing = new FoodListing(client, providerAccount, "beverage",
+        30, LocalDateTime.of(2024, 10, 7, 16, 30),
+        78.122f, 120.281f);
+    FoodListing savedListing = foodListingRepository.save(listing);
+    int listingId = savedListing.getListingId();
+
+    ResponseEntity<?> response = foodListingController.fulfillRequest(
+        clientId, providerId, listingId, 31);
+
+    // Check status code
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+  }
+
+  @Test
+  public void fulfillRequestUnauthorizedAccountTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+
+    // Create recipient account to make unauthorized call to fulfillRequest
+    ResponseEntity<AccountProfile> recipientProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.RECIPIENT, "1234567890", "r");
+    AccountProfile recipientAccount = recipientProfile.getBody();
+    assert recipientAccount != null;
+    int recipientAccountId = recipientAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing = new FoodListing(client, providerAccount, "beverage",
+        30, LocalDateTime.of(2024, 10, 7, 16, 30),
+        78.122f, 120.281f);
+    FoodListing savedListing = foodListingRepository.save(listing);
+    int listingId = savedListing.getListingId();
+
+    ResponseEntity<?> response = foodListingController.fulfillRequest(
+        clientId, recipientAccountId, listingId, 12);
+
+    // Check status code
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+  }
+
+  @Test
+  public void updateFoodListingMissingClientTest() {
+    ResponseEntity<?> response = foodListingController.updateFoodListing(
+        111, 1, 1,
+        null, null, null, null);
+
+    // Check status code
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void updateFoodListingMissingAccountTest() {
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    ResponseEntity<?> response = foodListingController.updateFoodListing(
+        clientId, 1, 1,
+        null, null, null, null);
+
+    // Check status code
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void updateFoodListingMissingAccountIdTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+    assert providerAccount != null;
+    int providerId = providerAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing = new FoodListing(client, providerAccount, "beverage",
+        30, LocalDateTime.of(2024, 10, 7, 16, 30),
+        78.122f, 120.281f);
+    foodListingRepository.save(listing);
+    int badListingId = listing.getListingId() + 2; // No listing has this ID
+
+    ResponseEntity<?> response = foodListingController.updateFoodListing(
+        clientId, providerId, badListingId,
+        null, null, null, null);
+
+    // Check status code
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void updateFoodListingUnauthorizedAccountTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+
+    // Create recipient account to make unauthorized call to updateFoodListing
+    ResponseEntity<AccountProfile> recipientProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.RECIPIENT, "1234567890", "r");
+    AccountProfile recipientAccount = recipientProfile.getBody();
+    assert recipientAccount != null;
+    int recipientAccountId = recipientAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing = new FoodListing(client, providerAccount, "beverage",
+        30, LocalDateTime.of(2024, 10, 7, 16, 30),
+        78.122f, 120.281f);
+    FoodListing savedListing = foodListingRepository.save(listing);
+    int listingId = savedListing.getListingId();
+
+    ResponseEntity<?> response = foodListingController.updateFoodListing(
+        clientId, recipientAccountId, listingId,
+        "OJ", 112.2f, 359.3f, 10);
+
+    // Check status code
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+  }
+
+  @Test
+  public void updateFoodListingNewFoodTypeTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+    assert providerAccount != null;
+    int providerAccountId = providerAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing = new FoodListing(client, providerAccount, "beverage",
+        30, LocalDateTime.of(2024, 10, 7, 16, 30),
+        78.122f, 120.281f);
+    FoodListing savedListing = foodListingRepository.save(listing);
+    int listingId = savedListing.getListingId();
+
+    ResponseEntity<?> response = foodListingController.updateFoodListing(
+        clientId, providerAccountId, listingId,
+        "hot cocoa", null, null, null);
+    // Check status
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    // Check that the food type of the saved listing has been correctly updated
+    Optional<FoodListing> listingOptional = foodListingRepository.findById(listingId);
+    if (listingOptional.isPresent()) {
+      FoodListing updatedListing = listingOptional.get();
+      assert(updatedListing.getFoodType().equals("hot cocoa")); // the only field that was changed
+      assert(updatedListing.getLatitude() == 78.122f);
+      assert(updatedListing.getLongitude() == 120.281f);
+      assert(updatedListing.getQuantityListed() == 30);
+    } else {
+      fail();
+    }
+  }
+
+  @Test
+  public void updateFoodListingNewLatitudeTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+    assert providerAccount != null;
+    int providerAccountId = providerAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing = new FoodListing(client, providerAccount, "beverage",
+        30, LocalDateTime.of(2024, 10, 7, 16, 30),
+        78.122f, 120.281f);
+    FoodListing savedListing = foodListingRepository.save(listing);
+    int listingId = savedListing.getListingId();
+
+    ResponseEntity<?> response = foodListingController.updateFoodListing(
+        clientId, providerAccountId, listingId,
+        null, 120f, null, null);
+    // Check status
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    // Check that the food type of the saved listing has been correctly updated
+    Optional<FoodListing> listingOptional = foodListingRepository.findById(listingId);
+    if (listingOptional.isPresent()) {
+      FoodListing updatedListing = listingOptional.get();
+      assert(updatedListing.getFoodType().equals("beverage"));
+      assert(updatedListing.getLatitude() == 120f);
+      assert(updatedListing.getLongitude() == 120.281f);
+      assert(updatedListing.getQuantityListed() == 30);
+    } else {
+      fail();
+    }
+  }
+
+  @Test
+  public void updateFoodListingNewLongitudeTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+    assert providerAccount != null;
+    int providerAccountId = providerAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing = new FoodListing(client, providerAccount, "beverage",
+        30, LocalDateTime.of(2024, 10, 7, 16, 30),
+        78.122f, 120.281f);
+    FoodListing savedListing = foodListingRepository.save(listing);
+    int listingId = savedListing.getListingId();
+
+    ResponseEntity<?> response = foodListingController.updateFoodListing(
+        clientId, providerAccountId, listingId,
+        null, null, 320.94f, null);
+    // Check status
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    // Check that the food type of the saved listing has been correctly updated
+    Optional<FoodListing> listingOptional = foodListingRepository.findById(listingId);
+    if (listingOptional.isPresent()) {
+      FoodListing updatedListing = listingOptional.get();
+      assert(updatedListing.getFoodType().equals("beverage"));
+      assert(updatedListing.getLatitude() == 78.122f);
+      assert(updatedListing.getLongitude() == 320.94f);
+      assert(updatedListing.getQuantityListed() == 30);
+    } else {
+      fail();
+    }
+  }
+
+  @Test
+  public void updateFoodListingNewQuantityTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+    assert providerAccount != null;
+    int providerAccountId = providerAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing = new FoodListing(client, providerAccount, "beverage",
+        30, LocalDateTime.of(2024, 10, 7, 16, 30),
+        78.122f, 120.281f);
+    FoodListing savedListing = foodListingRepository.save(listing);
+    int listingId = savedListing.getListingId();
+
+    ResponseEntity<?> response = foodListingController.updateFoodListing(
+        clientId, providerAccountId, listingId,
+        null, null, null, 1);
+    // Check status
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    // Check that the food type of the saved listing has been correctly updated
+    Optional<FoodListing> listingOptional = foodListingRepository.findById(listingId);
+    if (listingOptional.isPresent()) {
+      FoodListing updatedListing = listingOptional.get();
+      assert(updatedListing.getFoodType().equals("beverage"));
+      assert(updatedListing.getLatitude() == 78.122f);
+      assert(updatedListing.getLongitude() == 120.281f);
+      assert(updatedListing.getQuantityListed() == 1);
+    } else {
+      fail();
+    }
+  }
+
+  @Test
+  public void updateFoodListingNewComboTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+    assert providerAccount != null;
+    int providerAccountId = providerAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing = new FoodListing(client, providerAccount, "beverage",
+        30, LocalDateTime.of(2024, 10, 7, 16, 30),
+        78.122f, 120.281f);
+    FoodListing savedListing = foodListingRepository.save(listing);
+    int listingId = savedListing.getListingId();
+
+    ResponseEntity<?> response = foodListingController.updateFoodListing(
+        clientId, providerAccountId, listingId,
+        "espresso beans", 120f, null, 1000);
+    // Check status
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    // Check that the food type of the saved listing has been correctly updated
+    Optional<FoodListing> listingOptional = foodListingRepository.findById(listingId);
+    if (listingOptional.isPresent()) {
+      FoodListing updatedListing = listingOptional.get();
+      assert(updatedListing.getFoodType().equals("espresso beans"));
+      assert(updatedListing.getLatitude() == 120f);
+      assert(updatedListing.getLongitude() == 120.281f);
+      assert(updatedListing.getQuantityListed() == 1000);
+    } else {
+      fail();
+    }
+  }
+
+  @Test
+  public void updateFoodListingNewEveryTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+    assert providerAccount != null;
+    int providerAccountId = providerAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing = new FoodListing(client, providerAccount, "beverage",
+        30, LocalDateTime.of(2024, 10, 7, 16, 30),
+        78.122f, 120.281f);
+    FoodListing savedListing = foodListingRepository.save(listing);
+    int listingId = savedListing.getListingId();
+
+    ResponseEntity<?> response = foodListingController.updateFoodListing(
+        clientId, providerAccountId, listingId,
+        "BLT sandwich", 119.275f, 67.982f, 21);
+    // Check status
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    // Check that the food type of the saved listing has been correctly updated
+    Optional<FoodListing> listingOptional = foodListingRepository.findById(listingId);
+    if (listingOptional.isPresent()) {
+      FoodListing updatedListing = listingOptional.get();
+      assert(updatedListing.getFoodType().equals("BLT sandwich"));
+      assert(updatedListing.getLatitude() == 119.275f);
+      assert(updatedListing.getLongitude() == 67.982f);
+      assert(updatedListing.getQuantityListed() == 21);
+    } else {
+      fail();
     }
   }
 }
