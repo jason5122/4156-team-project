@@ -23,6 +23,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Unit tests for the FoodListingController class.
+ *
+ * <p>These tests validate the behavior of FoodListing-related API operations
+ * such as creating and retrieving food listings.
+ */
 @DataJpaTest
 @Import({FoodListingController.class,
     ClientProfileController.class,
@@ -56,14 +62,14 @@ public class FoodListingControllerUnitTests {
   }
 
   private void saveFoodListing2(ClientProfile client, AccountProfile account) {
-    FoodListing foodListing2 = new FoodListing( client, account, "beverage",
+    FoodListing foodListing2 = new FoodListing(client, account, "beverage",
         30, LocalDateTime.of(2024, 10, 7, 16, 30),
         78.122f, 120.281f);
     foodListingRepository.save(foodListing2);
   }
 
   private FoodListing makeFoodListing2(ClientProfile client, AccountProfile account) {
-    return new FoodListing( client, account, "beverage",
+    return new FoodListing(client, account, "beverage",
         30, LocalDateTime.of(2024, 10, 7, 16, 30),
         78.122f, 120.281f);
   }
@@ -95,7 +101,7 @@ public class FoodListingControllerUnitTests {
     int clientId = client.getClientId();
 
     ResponseEntity<AccountProfile> accountProfile = accountProfileController.createAccountProfile(
-            clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "x");
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "x");
     AccountProfile account = accountProfile.getBody();
     assert account != null;
     int accountId = account.getAccountId();
@@ -109,7 +115,7 @@ public class FoodListingControllerUnitTests {
     assertEquals(1, listings.size());
     FoodListing listing = listings.get(0);
 
-    assert(((String) Objects.requireNonNull(response.getBody()))
+    assert (((String) Objects.requireNonNull(response.getBody()))
         .contains("Food listing created successfully with ID: "));
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
     assertEquals("kiwi", listing.getFoodType());
@@ -135,7 +141,6 @@ public class FoodListingControllerUnitTests {
     ClientProfile client = clientProfile.getBody();
     assert client != null;
     int clientId = client.getClientId();
-
 
     ResponseEntity<?> response = foodListingController.createFoodListing(
         clientId, 222,
@@ -180,10 +185,10 @@ public class FoodListingControllerUnitTests {
     assertEquals(HttpStatus.OK, response.getStatusCode());
     @SuppressWarnings("unchecked") // suppress warning for unchecked cast...
     List<FoodListing> foodListings = (List<FoodListing>) response.getBody();
-    assert(Objects.requireNonNull(foodListings).size() == 2);
+    assert (Objects.requireNonNull(foodListings).size() == 2);
 
-    for (FoodListing listing: foodListings) {
-      assert(expected.contains(listing));
+    for (FoodListing listing : foodListings) {
+      assert (expected.contains(listing));
     }
   }
 
@@ -224,9 +229,9 @@ public class FoodListingControllerUnitTests {
     // Check body
     @SuppressWarnings("unchecked") // suppress warning for unchecked cast...
     List<FoodListing> foodListings = (List<FoodListing>) response.getBody();
-    assert(Objects.requireNonNull(foodListings).size() == 2);
-    for (FoodListing listing: foodListings) {
-      assert(expectedSet.contains(listing));
+    assert (Objects.requireNonNull(foodListings).size() == 2);
+    for (FoodListing listing : foodListings) {
+      assert (expectedSet.contains(listing));
     }
 
     // Test that we have the correct listings for the second client
@@ -237,8 +242,8 @@ public class FoodListingControllerUnitTests {
     // Check body
     @SuppressWarnings("unchecked") // suppress warning for unchecked cast...
     List<FoodListing> foodListings2 = (List<FoodListing>) response2.getBody();
-    assert(Objects.requireNonNull(foodListings2).size() == 1);
-    assert(foodListings2.get(0).equals(expected3));
+    assert (Objects.requireNonNull(foodListings2).size() == 1);
+    assert (foodListings2.get(0).equals(expected3));
   }
 
   @Test
@@ -326,22 +331,22 @@ public class FoodListingControllerUnitTests {
     assertEquals(HttpStatus.OK, response.getStatusCode());
     // Check body
     @SuppressWarnings("unchecked") // suppress warning for unchecked cast...
-    List<FoodListing> listingsFound = (List<FoodListing>)response.getBody();
-    assert(Objects.requireNonNull(listingsFound).size() == 1);
+    List<FoodListing> listingsFound = (List<FoodListing>) response.getBody();
+    assert (Objects.requireNonNull(listingsFound).size() == 1);
     FoodListing expected1 = makeFoodListing1(client, account);
-    assert(expected1.equals(listingsFound.get(0)));
+    assert (expected1.equals(listingsFound.get(0)));
 
     // Query form a location near listing 2
     ResponseEntity<?> response2 = foodListingController.getNearbyListings(
-        clientId,78.121f, 120.282f, 10);
+        clientId, 78.121f, 120.282f, 10);
     // Check status code
     assertEquals(HttpStatus.OK, response2.getStatusCode());
     // Check body
     @SuppressWarnings("unchecked")
     List<FoodListing> listingsFound2 = (List<FoodListing>) response2.getBody();
-    assert(Objects.requireNonNull(listingsFound2).size() == 1);
+    assert (Objects.requireNonNull(listingsFound2).size() == 1);
     FoodListing expected2 = makeFoodListing2(client, account);
-    assert(expected2.equals(listingsFound2.get(0)));
+    assert (expected2.equals(listingsFound2.get(0)));
   }
 
   @Test
@@ -381,20 +386,20 @@ public class FoodListingControllerUnitTests {
     // Check body
     @SuppressWarnings("unchecked") // suppress warning for unchecked cast...
     List<FoodListing> listingsFound = (List<FoodListing>) response.getBody();
-    assert(Objects.requireNonNull(listingsFound).size() == 1);
+    assert (Objects.requireNonNull(listingsFound).size() == 1);
     FoodListing expected1 = makeFoodListing1(client1, account1);
-    assert(expected1.equals(listingsFound.get(0)));
+    assert (expected1.equals(listingsFound.get(0)));
 
     ResponseEntity<?> response2 = foodListingController.getNearbyListings(
-        client2Id,78.121f, 120.282f, 10);
+        client2Id, 78.121f, 120.282f, 10);
     // Check status code
     assertEquals(HttpStatus.OK, response2.getStatusCode());
     // Check body
     @SuppressWarnings("unchecked") // suppress warning for unchecked cast...
-    List<FoodListing> listingsFound2 = (List<FoodListing> ) response2.getBody();
-    assert(Objects.requireNonNull(listingsFound2).size() == 1);
+    List<FoodListing> listingsFound2 = (List<FoodListing>) response2.getBody();
+    assert (Objects.requireNonNull(listingsFound2).size() == 1);
     FoodListing expected2 = makeFoodListing1(client2, account2);
-    assert(expected2.equals(listingsFound.get(0)));
+    assert (expected2.equals(listingsFound.get(0)));
   }
 
   @Test
@@ -426,8 +431,8 @@ public class FoodListingControllerUnitTests {
     FoodListing expected1 = makeFoodListing1(client, account);
     FoodListing expected3 = makeFoodListing3(client, account);
     Set<FoodListing> expectedSet = Set.of(expected1, expected3);
-    for (FoodListing listing: listingsFound) {
-      assert(expectedSet.contains(listing));
+    for (FoodListing listing : listingsFound) {
+      assert (expectedSet.contains(listing));
     }
   }
 
@@ -465,7 +470,6 @@ public class FoodListingControllerUnitTests {
         clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "x");
     AccountProfile account = accountProfile.getBody();
     assert account != null;
-    int accountId = account.getAccountId();
 
     ResponseEntity<AccountProfile> accountProfile2 = accountProfileController.createAccountProfile(
         clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "x");
@@ -477,6 +481,7 @@ public class FoodListingControllerUnitTests {
     saveFoodListing3(client, account2);
 
     // Check status code
+    int accountId = account.getAccountId();
     ResponseEntity<?> response = foodListingController.getFoodListingsUnderAccount(
         clientId, accountId);
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -493,7 +498,6 @@ public class FoodListingControllerUnitTests {
         clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "x");
     AccountProfile account = accountProfile.getBody();
     assert account != null;
-    int accountId = account.getAccountId();
 
     // Save listings under account 2, then should find no listings when querying account 1
     saveFoodListing1(client, account);
@@ -501,21 +505,22 @@ public class FoodListingControllerUnitTests {
     saveFoodListing3(client, account);
 
     // Check status code
+    int accountId = account.getAccountId();
     ResponseEntity<?> response = foodListingController.getFoodListingsUnderAccount(
         clientId, accountId);
     assertEquals(HttpStatus.OK, response.getStatusCode());
     // Check body
     @SuppressWarnings("unchecked") // suppress warning for unchecked cast...
     List<FoodListing> foodListings = (List<FoodListing>) response.getBody();
-    assert(Objects.requireNonNull(foodListings).size() == 3);
+    assert (Objects.requireNonNull(foodListings).size() == 3);
 
     FoodListing expected1 = makeFoodListing1(client, account);
     FoodListing expected2 = makeFoodListing2(client, account);
     FoodListing expected3 = makeFoodListing3(client, account);
     Set<FoodListing> expectedSet = Set.of(expected1, expected2, expected3);
 
-    for (FoodListing listing: foodListings) {
-      assert(expectedSet.contains(listing));
+    for (FoodListing listing : foodListings) {
+      assert (expectedSet.contains(listing));
     }
   }
 
@@ -784,10 +789,10 @@ public class FoodListingControllerUnitTests {
     Optional<FoodListing> listingOptional = foodListingRepository.findById(listingId);
     if (listingOptional.isPresent()) {
       FoodListing updatedListing = listingOptional.get();
-      assert(updatedListing.getFoodType().equals("hot cocoa")); // the only field that was changed
-      assert(updatedListing.getLatitude() == 78.122f);
-      assert(updatedListing.getLongitude() == 120.281f);
-      assert(updatedListing.getQuantityListed() == 30);
+      assert (updatedListing.getFoodType().equals("hot cocoa")); // the only field that was changed
+      assert (updatedListing.getLatitude() == 78.122f);
+      assert (updatedListing.getLongitude() == 120.281f);
+      assert (updatedListing.getQuantityListed() == 30);
     } else {
       fail();
     }
@@ -824,10 +829,10 @@ public class FoodListingControllerUnitTests {
     Optional<FoodListing> listingOptional = foodListingRepository.findById(listingId);
     if (listingOptional.isPresent()) {
       FoodListing updatedListing = listingOptional.get();
-      assert(updatedListing.getFoodType().equals("beverage"));
-      assert(updatedListing.getLatitude() == 120f);
-      assert(updatedListing.getLongitude() == 120.281f);
-      assert(updatedListing.getQuantityListed() == 30);
+      assert (updatedListing.getFoodType().equals("beverage"));
+      assert (updatedListing.getLatitude() == 120f);
+      assert (updatedListing.getLongitude() == 120.281f);
+      assert (updatedListing.getQuantityListed() == 30);
     } else {
       fail();
     }
@@ -864,10 +869,10 @@ public class FoodListingControllerUnitTests {
     Optional<FoodListing> listingOptional = foodListingRepository.findById(listingId);
     if (listingOptional.isPresent()) {
       FoodListing updatedListing = listingOptional.get();
-      assert(updatedListing.getFoodType().equals("beverage"));
-      assert(updatedListing.getLatitude() == 78.122f);
-      assert(updatedListing.getLongitude() == 320.94f);
-      assert(updatedListing.getQuantityListed() == 30);
+      assert (updatedListing.getFoodType().equals("beverage"));
+      assert (updatedListing.getLatitude() == 78.122f);
+      assert (updatedListing.getLongitude() == 320.94f);
+      assert (updatedListing.getQuantityListed() == 30);
     } else {
       fail();
     }
@@ -904,10 +909,10 @@ public class FoodListingControllerUnitTests {
     Optional<FoodListing> listingOptional = foodListingRepository.findById(listingId);
     if (listingOptional.isPresent()) {
       FoodListing updatedListing = listingOptional.get();
-      assert(updatedListing.getFoodType().equals("beverage"));
-      assert(updatedListing.getLatitude() == 78.122f);
-      assert(updatedListing.getLongitude() == 120.281f);
-      assert(updatedListing.getQuantityListed() == 1);
+      assert (updatedListing.getFoodType().equals("beverage"));
+      assert (updatedListing.getLatitude() == 78.122f);
+      assert (updatedListing.getLongitude() == 120.281f);
+      assert (updatedListing.getQuantityListed() == 1);
     } else {
       fail();
     }
@@ -944,10 +949,10 @@ public class FoodListingControllerUnitTests {
     Optional<FoodListing> listingOptional = foodListingRepository.findById(listingId);
     if (listingOptional.isPresent()) {
       FoodListing updatedListing = listingOptional.get();
-      assert(updatedListing.getFoodType().equals("espresso beans"));
-      assert(updatedListing.getLatitude() == 120f);
-      assert(updatedListing.getLongitude() == 120.281f);
-      assert(updatedListing.getQuantityListed() == 1000);
+      assert (updatedListing.getFoodType().equals("espresso beans"));
+      assert (updatedListing.getLatitude() == 120f);
+      assert (updatedListing.getLongitude() == 120.281f);
+      assert (updatedListing.getQuantityListed() == 1000);
     } else {
       fail();
     }
@@ -984,10 +989,10 @@ public class FoodListingControllerUnitTests {
     Optional<FoodListing> listingOptional = foodListingRepository.findById(listingId);
     if (listingOptional.isPresent()) {
       FoodListing updatedListing = listingOptional.get();
-      assert(updatedListing.getFoodType().equals("BLT sandwich"));
-      assert(updatedListing.getLatitude() == 119.275f);
-      assert(updatedListing.getLongitude() == 67.982f);
-      assert(updatedListing.getQuantityListed() == 21);
+      assert (updatedListing.getFoodType().equals("BLT sandwich"));
+      assert (updatedListing.getLatitude() == 119.275f);
+      assert (updatedListing.getLongitude() == 67.982f);
+      assert (updatedListing.getQuantityListed() == 21);
     } else {
       fail();
     }

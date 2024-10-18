@@ -1,10 +1,5 @@
 package dev.coms4156.project.teamproject.model;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Objects;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,12 +8,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
- * Represents a food request made by an account (user) of a client (app) 
- * for a specific food listing. A food request includes information about 
- * the account making the request, the food listing, the quantity requested, 
- * and the request and pickup times.
+ * Represents a food request made by an account (user) of a client (app) for a specific food
+ * listing. A food request includes information about the account making the request, the food
+ * listing, the quantity requested, and the request and pickup times.
  */
 @Entity
 public class FoodRequest implements Serializable {
@@ -31,8 +29,8 @@ public class FoodRequest implements Serializable {
   @Column(name = "request_id", unique = true)
   private int requestId;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)  
-  @JoinColumn(name = "client_id", nullable = false)  
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "client_id", nullable = false)
   private ClientProfile client;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -47,22 +45,24 @@ public class FoodRequest implements Serializable {
   private LocalDateTime requestTime;
 
   /**
-   * Default constructor for the FoodListing class.
-   * This constructor is required by JPA for object instantiation.
-   * We suppress the warning since the PMD default ruleset does not comply with this.
+   * Default constructor for the FoodListing class. This constructor is required by JPA for object
+   * instantiation. We suppress the warning since the PMD default ruleset does not comply with
+   * this.
    */
   @SuppressWarnings("PMD.UncommentedEmptyConstructor")
-  public FoodRequest() {}
-  
+  public FoodRequest() {
+  }
+
   /**
    * Constructs a new FoodRequest object.
    *
-   * @param client client for whom this account is being created
-   * @param account the account (user) making the request
-   * @param foodListing the food listing being requested
+   * @param client            client for whom this account is being created
+   * @param account           the account (user) making the request
+   * @param foodListing       the food listing being requested
    * @param quantityRequested Quantity of the food requested
    */
-  public FoodRequest(ClientProfile client, AccountProfile account, FoodListing foodListing, int quantityRequested) {
+  public FoodRequest(ClientProfile client, AccountProfile account, FoodListing foodListing,
+      int quantityRequested) {
     this.client = client;
     this.account = account;
     this.foodListing = foodListing;
@@ -135,8 +135,8 @@ public class FoodRequest implements Serializable {
   }
 
   /**
-   * Compares this FoodRequest to another object for equality based on the
-   * request ID, food listing, and request details.
+   * Compares this FoodRequest to another object for equality based on the request ID, food listing,
+   * and request details.
    *
    * @param other the object to compare with
    * @return true if the two objects are equal, false otherwise

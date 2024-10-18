@@ -28,8 +28,8 @@ public class App implements CommandLineRunner {
 
   /**
    * This contains all the setup logic, it will mainly be focused on loading up and creating an
-   * instance of the database based off a saved file or will create a fresh database if the file
-   * is not present.
+   * instance of the database based off a saved file or will create a fresh database if the file is
+   * not present.
    *
    * @param args A {@code String[]} of any potential runtime args
    */

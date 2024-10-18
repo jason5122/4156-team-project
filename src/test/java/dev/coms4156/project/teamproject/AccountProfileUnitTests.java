@@ -9,6 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
+/**
+ * Unit tests for the AccountProfile class.
+ *
+ * <p>These tests validate the behavior of AccountProfile-related API operations.
+ */
 @SpringBootTest
 @ContextConfiguration
 public class AccountProfileUnitTests {
@@ -52,10 +57,10 @@ public class AccountProfileUnitTests {
     ClientProfile client = new ClientProfile();
     AccountProfile account = new AccountProfile(client, AccountProfile.AccountType.PROVIDER,
         "1123331929", "Mikey D's");
-    assert(account.toString().contains("accountId='"));
-    assert(account.toString().contains("accountType=PROVIDER"));
-    assert(account.toString().contains("phoneNumber='1123331929'"));
-    assert(account.toString().contains("name='Mikey D's'"));
+    assert (account.toString().contains("accountId='"));
+    assert (account.toString().contains("accountType=PROVIDER"));
+    assert (account.toString().contains("phoneNumber='1123331929'"));
+    assert (account.toString().contains("name='Mikey D's'"));
   }
 
   @Test
