@@ -39,8 +39,9 @@ public class FoodListingController {
     @Autowired private FoodRequestRepository foodRequestRepository;
 
     /**
-     * API endpoint to create a new food listing in the client with `clientId`.
-     * Expects that the specified client exists.
+     * API endpoint to create a new food listing in account with `accountId`
+     * using the client with `clientId`.
+     * Expects that the specified account exists.
      *
      * @param clientId ID of the client that the account is under
      * @param accountId ID of the account creating the listing
@@ -48,8 +49,9 @@ public class FoodListingController {
      * @param quantityListed Quantity of food available
      * @param latitude Latitude of the food's location
      * @param longitude Longitude of the food's location
-     * @return If a client with `clientId` does not exist, returns a ResponseEntity
-     *          with status code NOT_FOUND.
+     * @return If there is no account with `accountId`
+     *          that is registered in the client with `clientId`,
+     *          returns a ResponseEntity with status code NOT_FOUND.
      *          If the listing was successfully created and saved to the database,
      *          returns with status code OK and a message with the ID of the listing.
      *          Otherwise, returns with status code INTERNAL_SERVER_ERROR
@@ -102,7 +104,7 @@ public class FoodListingController {
         Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
         if (clientOptional.isEmpty()) {
             Map<String, Object> body = new HashMap<>();
-            body.put("error", "Client ID or account ID not found.");
+            body.put("error", "Client ID not found.");
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
 
@@ -139,7 +141,7 @@ public class FoodListingController {
         Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
         if (clientOptional.isEmpty()) {
             Map<String, Object> body = new HashMap<>();
-            body.put("error", "Client ID or account ID not found.");
+            body.put("error", "Client ID not found.");
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
 
