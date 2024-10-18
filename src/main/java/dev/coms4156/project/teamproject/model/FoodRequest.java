@@ -3,6 +3,7 @@ package dev.coms4156.project.teamproject.model;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,11 +13,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.util.Objects;
 
 /**
- * Represents a Food Request made by an account (user) 
- * of a client (app) for a specific food listing.
+ * Represents a food request made by an account (user) of a client (app) 
+ * for a specific food listing. A food request includes information about 
+ * the account making the request, the food listing, the quantity requested, 
+ * and the request and pickup times.
  */
 @Entity
 public class FoodRequest implements Serializable {
@@ -44,6 +46,9 @@ public class FoodRequest implements Serializable {
   private int quantityRequested;
   private LocalDateTime requestTime;
 
+  /**
+   * Default constructor for JPA.
+   */
   public FoodRequest() {}
   
   /**
@@ -62,34 +67,77 @@ public class FoodRequest implements Serializable {
     this.requestTime = LocalDateTime.now();  // Automatically set to current time
   }
 
+  /**
+   * Returns the ID of this food request.
+   *
+   * @return the food request ID
+   */
   public int getRequestId() {
     return requestId;
   }
 
+  /**
+   * Returns the food listing associated with this request.
+   *
+   * @return the food listing
+   */
   public FoodListing getListing() {
     return foodListing;
   }
 
+  /**
+   * Returns the account making this request.
+   *
+   * @return the account associated with the request
+   */
   public AccountProfile getAccountId() {
     return account;
   }
 
+  /**
+   * Returns the client making this request.
+   *
+   * @return the client associated with the request
+   */
   public ClientProfile getClient() {
     return client;
   }
 
+
+  /**
+   * Returns the quantity of food requested.
+   *
+   * @return the quantity requested
+   */
   public int getQuantityRequested() {
     return quantityRequested;
   }
 
+  /**
+   * Sets the quantity of food requested.
+   *
+   * @param quantityRequested the quantity to set
+   */
   public void setQuantityRequested(int quantityRequested) {
     this.quantityRequested = quantityRequested;
   }
 
+  /**
+   * Returns the time the request was made.
+   *
+   * @return the request time
+   */
   public LocalDateTime getRequestTime() {
     return requestTime;
   }
 
+  /**
+   * Compares this FoodRequest to another object for equality based on the
+   * request ID, food listing, and request details.
+   *
+   * @param other the object to compare with
+   * @return true if the two objects are equal, false otherwise
+   */
   @Override
   public boolean equals(Object other) {
     if (!(other instanceof FoodRequest otherListing)) {
@@ -102,6 +150,11 @@ public class FoodRequest implements Serializable {
         && this.requestTime.toString().equals(otherListing.getRequestTime().toString());
   }
 
+  /**
+   * Generates a hash code for this FoodRequest based on its fields.
+   *
+   * @return the hash code
+   */
   @Override
   public int hashCode() {
     return Objects.hash(requestId, client, account, quantityRequested, requestTime);
