@@ -1,6 +1,5 @@
 package dev.coms4156.project.teamproject.model;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 import jakarta.persistence.Column;
@@ -40,6 +39,12 @@ public class AccountProfile implements Serializable {
     RECIPIENT
   }
 
+  /**
+   * Default constructor for the FoodListing class.
+   * This constructor is required by JPA for object instantiation.
+   * We suppress the warning since the PMD default ruleset does not comply with this.
+   */
+  @SuppressWarnings("PMD.UncommentedEmptyConstructor")
   public AccountProfile() {}
 
   /**
@@ -54,7 +59,7 @@ public class AccountProfile implements Serializable {
       String phoneNumber, String name) {
     this.client = client;
     this.accountType = accountType;
-    if (!(phoneNumber.matches("\\d+"))) {
+    if (!phoneNumber.matches("\\d+")) {
       throw new IllegalArgumentException("Phone number must consist of numeric digits only.");
     }
     if (!(phoneNumber.length() == 10 || phoneNumber.length() == 11)) {

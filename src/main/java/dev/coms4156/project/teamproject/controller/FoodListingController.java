@@ -1,7 +1,5 @@
 package dev.coms4156.project.teamproject.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import dev.coms4156.project.teamproject.model.AccountProfile;
 import dev.coms4156.project.teamproject.model.ClientProfile;
 import dev.coms4156.project.teamproject.model.FoodListing;
@@ -17,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

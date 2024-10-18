@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FoodListingRepository extends JpaRepository<FoodListing, Integer> {
-    public List<FoodListing> findByClient(ClientProfile client);
-    public List<FoodListing> findByClientAndAccount(ClientProfile client, AccountProfile account);
-    public Optional<FoodListing> findByClientAndAccountAndListingId(ClientProfile client,
+    List<FoodListing> findByClient(ClientProfile client);
+    List<FoodListing> findByClientAndAccount(ClientProfile client, AccountProfile account);
+    Optional<FoodListing> findByClientAndAccountAndListingId(ClientProfile client,
                                                                     AccountProfile account,
                                                                     int listingId);
 }

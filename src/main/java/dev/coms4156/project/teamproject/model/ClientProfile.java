@@ -20,9 +20,11 @@ public class ClientProfile implements Serializable {
   public int clientId;
 
   /**
-   * Constructs a new Client object.
-   *
+   * Default constructor for the FoodListing class.
+   * This constructor is required by JPA for object instantiation.
+   * We suppress the warning since the PMD default ruleset does not comply with this.
    */
+  @SuppressWarnings({"PMD.UncommentedEmptyConstructor", "PMD.UnnecessaryConstructor"})
   public ClientProfile() {
   }
 

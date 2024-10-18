@@ -56,7 +56,12 @@ public class FoodListing implements Serializable {
   @Column(name = "longitude")
   private float longitude;
 
-  // No-argument constructor required by JPA
+  /**
+   * Default constructor for the FoodListing class.
+   * This constructor is required by JPA for object instantiation.
+   * We suppress the warning since the PMD default ruleset does not comply with this.
+   */
+  @SuppressWarnings("PMD.UncommentedEmptyConstructor")
   public FoodListing() {}
 
   /**

@@ -44,6 +44,12 @@ public class FoodRequest implements Serializable {
   private int quantityRequested;
   private LocalDateTime requestTime;
 
+  /**
+   * Default constructor for the FoodListing class.
+   * This constructor is required by JPA for object instantiation.
+   * We suppress the warning since the PMD default ruleset does not comply with this.
+   */
+  @SuppressWarnings("PMD.UncommentedEmptyConstructor")
   public FoodRequest() {}
   
   /**
