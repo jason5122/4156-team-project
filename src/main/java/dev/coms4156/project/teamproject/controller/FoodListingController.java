@@ -237,7 +237,7 @@ public class FoodListingController {
         if (account.getAccountType() != AccountProfile.AccountType.PROVIDER) {
             Map<String, Object> body = new HashMap<>();
             body.put("error", "Expected account holder to be a PROVIDER.");
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
         }
 
         // Find the listing that the provider wishes to see all requests for
@@ -307,7 +307,7 @@ public class FoodListingController {
         if (account.getAccountType() != AccountProfile.AccountType.PROVIDER) {
             Map<String, Object> body = new HashMap<>();
             body.put("error", "Expected account holder to be a PROVIDER.");
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
         }
 
         // Find the listing that will satisfy a request
@@ -384,7 +384,7 @@ public class FoodListingController {
         if (account.getAccountType() != AccountProfile.AccountType.PROVIDER) {
             Map<String, Object> body = new HashMap<>();
             body.put("error", "Expected account holder to be a PROVIDER.");
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
         }
 
         // Find the specified listing
