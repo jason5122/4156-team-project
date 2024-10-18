@@ -122,6 +122,37 @@ public class FoodListingControllerIntegrationTests {
   }
 
   @Test
+  public void getRequestsForListingUnauthorizedAccountTest() {
+    // Create client
+    ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
+    ClientProfile client = clientProfile.getBody();
+    assert client != null;
+    int clientId = client.getClientId();
+
+    // Create provider account
+    ResponseEntity<AccountProfile> providerProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.PROVIDER, "1234567890", "p");
+    AccountProfile providerAccount = providerProfile.getBody();
+
+    // Create recipient account
+    ResponseEntity<AccountProfile> recipientProfile = accountProfileController.createAccountProfile(
+        clientId, AccountProfile.AccountType.RECIPIENT, "1234567890", "r");
+    AccountProfile recipientAccount = recipientProfile.getBody();
+    int recipientAccountId = recipientAccount.getAccountId();
+
+    // Create listing
+    FoodListing listing1 = saveListing1(client, providerAccount);
+    int listingId = listing1.getListingId();
+    // Send request for listing
+    requestListing(client, recipientAccount,listing1, 1);
+
+    // Try to call this endpoint as a recipient type account
+    ResponseEntity<?> response = foodListingController.getRequestsForListing(
+        clientId, recipientAccountId, listingId);
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+  }
+
+  @Test
   public void getRequestsForListingMissingListingTest() {
     // Create client
     ResponseEntity<ClientProfile> clientProfile = clientProfileController.createClientProfile();
