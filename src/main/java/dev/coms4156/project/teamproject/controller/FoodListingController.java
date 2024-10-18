@@ -207,8 +207,10 @@ public class FoodListingController {
      *      that was created by a provider associated with `clientId` or `accountId`,
      *      a ResponseEntity with status code NOT_FOUND.
      *      Else if at least one request has been made for the specified listing,
-     *      a ResponseEntity with status code ok and a collection of requests.
-     *      Else, a ResponseEntity with status code NOT_FOUND otherwise.
+     *      returns with status code ok and a collection of requests.
+     *      Else, returns with status code NOT_FOUND.
+     *      If the account calling this is not a provider, returns with
+     *      status code UNAUTHORIZED.
      */
     @GetMapping("/getRequestsForListing")
     public ResponseEntity<?> getRequestsForListing(
@@ -229,7 +231,7 @@ public class FoodListingController {
         if (account.getAccountType() != AccountProfile.AccountType.PROVIDER) {
             Map<String, Object> body = new HashMap<>();
             body.put("error", "Expected account holder to be a PROVIDER.");
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
         }
 
         // Find the listing that the provider wishes to see all requests for
@@ -268,8 +270,10 @@ public class FoodListingController {
      * @param listingId ID of the listing that the provider wishes to update
      * @return A ResponseEntity with status code OK if the listing was successfully updated
      *          or status code BAD_REQUEST otherwise. If there is no entry associated with
-     *          `clientId`, `accountId`, and `listingId`, returns a ResponseEntity with
+     *          `clientId`, `accountId`, and `listingId`, returns with
      *          status code NOT_FOUND.
+     *          If the account calling this is not a provider, returns with
+     *          status code UNAUTHORIZED.
      */
     @PatchMapping("/fulfillRequest")
     public ResponseEntity<?> fulfillRequest(
@@ -292,7 +296,7 @@ public class FoodListingController {
         if (account.getAccountType() != AccountProfile.AccountType.PROVIDER) {
             Map<String, Object> body = new HashMap<>();
             body.put("error", "Expected account holder to be a PROVIDER.");
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
         }
 
         // Find the listing that will satisfy a request
@@ -364,7 +368,7 @@ public class FoodListingController {
         if (account.getAccountType() != AccountProfile.AccountType.PROVIDER) {
             Map<String, Object> body = new HashMap<>();
             body.put("error", "Expected account holder to be a PROVIDER.");
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
         }
 
         // Find the specified listing
