@@ -1,7 +1,5 @@
 package dev.coms4156.project.teamproject.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import dev.coms4156.project.teamproject.model.AccountProfile;
 import dev.coms4156.project.teamproject.model.ClientProfile;
 import dev.coms4156.project.teamproject.model.FoodListing;
@@ -17,13 +15,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,19 +37,19 @@ public class FoodListingController {
     @Autowired private FoodRequestRepository foodRequestRepository;
 
     /**
-     * API endpoint to create a new food listing in account with `accountId`
-     * using the client with `clientId`.
+     * API endpoint to create a new food listing
+     * under the account with `accountId` in the client with `clientId`.
      * Expects that the specified account exists.
      *
-     * @param clientId ID of the client that the account is under
+     * @param clientId ID of the client
      * @param accountId ID of the account creating the listing
      * @param foodType Type of the food
      * @param quantityListed Quantity of food available
      * @param latitude Latitude of the food's location
      * @param longitude Longitude of the food's location
-     * @return If there is no account with `accountId`
-     *          that is registered in the client with `clientId`,
-     *          returns a ResponseEntity with status code NOT_FOUND.
+     * @return If there is no account with `accountId` in the client with `clientId`,
+     *          returns a ResponseEntity with status code NOT_FOUND
+     *          and a corresponding error message.
      *          If the listing was successfully created and saved to the database,
      *          returns with status code OK and a message with the ID of the listing.
      *          Otherwise, returns with status code INTERNAL_SERVER_ERROR
@@ -93,8 +91,9 @@ public class FoodListingController {
      * API endpoint to get all food listings in a client with `clientId`.
      *
      * @param clientId ID of the client
-     * @return If a client with `clientId` does not exist, returns a ResponseEntity
-     *          with status code NOT_FOUND.
+     * @return If there is no client with `clientId`,
+     *          returns a ResponseEntity with status code NOT_FOUND
+     *          and a corresponding error message.
      *          If there is at least one listing in the specified client,
      *          returns with status code OK and a collection of such listings.
      *          Otherwise, returns with status code NOT_FOUND.
@@ -127,8 +126,9 @@ public class FoodListingController {
      * @param maxDistance An optional parameter for the maximum distance
      *                    from the specified location to consider when searching for food listings;
      *                    expected to be greater than 0.
-     * @return If a client with `clientId` does not exist, returns a ResponseEntity
-     *          with status code NOT_FOUND.
+     * @return If there is no client with `clientId`,
+     *          returns a ResponseEntity with status code NOT_FOUND
+     *          and a corresponding error message.
      *          If there is at least one listing within the specified distance of the
      *          specified location, returns with status code OK and a collection of such listings.
      *          Otherwise, returns with status code NOT_FOUND.
@@ -167,13 +167,12 @@ public class FoodListingController {
     }
 
     /**
-     * API endpoint to get all food listings created by
-     * the account with `accountId` using the client with `clientId`
+     * API endpoint to get all food listings under an
+     * account with `accountId` in the client with `clientId`
      *
      * @param clientId ID of the client
      * @param accountId ID of the account trying to fetch all their listings
-     * @return If there is no account with `accountId`
-     *          that is registered in the client with `clientId`,
+     * @return If there is no account with `accountId` in the client with `clientId`,
      *          returns a ResponseEntity with status code NOT_FOUND.
      *          If the account with `accountId` is not of type `AccountType.PROVIDER`,
      *          returns with status code UNAUTHORIZED.
@@ -204,15 +203,14 @@ public class FoodListingController {
     }
 
     /**
-     *  API endpoint for fetching the requests made by recipients using
-     *  a client with `clientId` for a listing created by a provider
-     *  account with `accountId` using the same client with `clientId`.
+     *  API endpoint for fetching the requests made for a listing with `listingId`
+     *  under a provider account with `accountId` in the client with `clientId`.
      *
      * @param clientId ID of the client
      * @param accountId ID of the provider account trying to get the requests for a listing
      * @param listingId ID of the listing to find requests for
-     * @return If there is no listing with `listingId` that was created by
-     *          an account with `accountId` using the client with `clientId`,
+     * @return If there is no listing with `listingId` under
+     *          an account with `accountId` in the client with `clientId`,
      *          returns a ResponseEntity with status code NOT_FOUND.
      *          If the account with `accountId` is not of type `AccountType.PROVIDER`,
      *          returns with status code UNAUTHORIZED.
@@ -267,8 +265,8 @@ public class FoodListingController {
     }
 
     /**
-     * API endpoint for fulfilling a request for the listing created by
-     * a provider account with `accountId` using the client with `clientId`.
+     * API endpoint for fulfilling a request for the listing with `listingId` under
+     * a provider account with `accountId` in the client with `clientId`.
      * Expects the account to be of type `AccountType.PROVIDER`.
      * Updates the listing by decrementing `quantityListed` by `quantityRequested`.
      * If `quantityRequested` is not specified, its default value is 1.
@@ -279,8 +277,8 @@ public class FoodListingController {
      * @param accountId ID of the provider account trying to fulfill a request for
      *                  one of their listings and update this listing accordingly
      * @param listingId ID of the listing that the request is made for
-     * @return If there is no listing with `listingId` that was created by
-     *          an account with `accountId` using the client with `clientId`,
+     * @return If there is no listing with `listingId` under
+     *          an account with `accountId` in the client with `clientId`,
      *          returns a ResponseEntity with status code NOT_FOUND.
      *          If the account with `accountId` is not of type `AccountType.PROVIDER`,
      *          returns with status code UNAUTHORIZED.
@@ -342,26 +340,26 @@ public class FoodListingController {
 
     /**
      * API endpoint for updating the food type, latitude, longitude, and/or
-     * quantity listed of a listing with `listingId` that was created by an
-     * account with `accountId` using the client with `clientId`.
+     * quantity listed of a listing with `listingId` under an
+     * account with `accountId` in the client with `clientId`.
      * Expects account to be of type `AccountType.PROVIDER`.
      *
      * @param clientId ID of the client
-     * @param accountId ID of the account using the client
+     * @param accountId ID of the account in the client
      * @param listingId ID of the listing to update
      * @param newFoodType An optional parameter for the new food type
      * @param newLatitude An optional parameter for the new latitude
      * @param newLongitude An optional parameter for the new longitude
      * @param newQuantityListed An optional parameter for the new quantity listed
-     * @return If there is no listing with `listingId` that was created by
-     *          an account with `accountId` using the client with `clientId`,
+     * @return If there is no listing with `listingId` under
+     *          an account with `accountId` in the client with `clientId`,
      *          returns a ResponseEntity with status code NOT_FOUND.
      *          If the account with `accountId` is not of type `AccountType.PROVIDER`,
      *          returns with status code UNAUTHORIZED.
      *          If the listing was successfully updated, returns with status code OK
      *          and a corresponding message.
      */
-    @PatchMapping("/updateFoodListing")
+    @PutMapping("/updateFoodListing")
     public ResponseEntity<?> updateFoodListing(
         @RequestParam int clientId, @RequestParam int accountId, @RequestParam int listingId,
         @RequestParam(required = false) String newFoodType,
