@@ -152,7 +152,7 @@ public class FoodListingControllerMockTests {
 
     // Create wrong food listing that will trigger Exception
     FoodListing differentFoodListing = new FoodListing(
-        client, account, "kiwi", 999,
+        client, account, "kiwi", 10,
         LocalDateTime.now(), 34.052f, 88.118f);
 
     // Mock foodListingRepository to return wrong food listing when we save something to it
