@@ -22,6 +22,14 @@ import dev.coms4156.project.teamproject.repository.ClientProfileRepository;
 import dev.coms4156.project.teamproject.repository.FoodListingRepository;
 import dev.coms4156.project.teamproject.repository.FoodRequestRepository;
 
+
+/**
+ * Controller that provides API endpoints for creating, retrieving, and updating
+ * food requests made by accounts for specific food listings.
+ * 
+ * FoodRequestController handles the creation of new food requests,
+ * fetching existing requests by their ID, and updating the quantity of food requested.
+ */
 @RestController
 @RequestMapping("/api/foodRequests")
 public class FoodRequestController {
@@ -31,6 +39,14 @@ public class FoodRequestController {
     private final AccountProfileRepository accountProfileRepository;
     private final FoodListingRepository foodListingRepository;
 
+    /**
+     * Constructs a FoodRequestController with the necessary repositories.
+     *
+     * @param foodRequestRepository the repository for managing FoodRequest entities
+     * @param clientProfileRepository the repository for managing ClientProfile entities
+     * @param accountProfileRepository the repository for managing AccountProfile entities
+     * @param foodListingRepository the repository for managing FoodListing entities
+     */
     public FoodRequestController(FoodRequestRepository foodRequestRepository, 
                                  ClientProfileRepository clientProfileRepository,
                                  AccountProfileRepository accountProfileRepository,
@@ -41,6 +57,16 @@ public class FoodRequestController {
         this.foodListingRepository = foodListingRepository;
     }
 
+    /**
+     * Creates a new FoodRequest with the provided clientId, accountId, listingId, 
+     * and quantityRequested.
+     *
+     * @param clientId the ID of the client making the request
+     * @param accountId the ID of the account making the request
+     * @param listingId the ID of the food listing being requested
+     * @param quantityRequested the quantity of food requested
+     * @return a ResponseEntity containing the created FoodRequest and HTTP status code
+     */
     @PostMapping("/create")
     public ResponseEntity<FoodRequest> createFoodRequest(
             @RequestParam int clientId,
@@ -66,6 +92,14 @@ public class FoodRequestController {
         return new ResponseEntity<>(foodRequest, HttpStatus.CREATED);
     }
 
+
+    /**
+     * Retrieves a FoodRequest by its requestId.
+     *
+     * @param requestId the ID of the food request to retrieve
+     * @return a ResponseEntity containing the FoodRequest details if found, 
+     *         or an error message and HTTP status code if not found
+     */
 	@GetMapping("/get")
 	public ResponseEntity<?> getFoodRequest(@RequestParam int requestId) {
 		try {
@@ -92,6 +126,15 @@ public class FoodRequestController {
 		}
 	}
 
+
+    /**
+     * Updates the quantityRequested of an existing FoodRequest.
+     *
+     * @param requestId the ID of the food request to update
+     * @param quantityRequested the new quantity of food requested
+     * @return a ResponseEntity containing a success message and HTTP status code,
+     *         or an error message and HTTP status code if the request ID was not found
+     */
     @PutMapping("/update")
     public ResponseEntity<?> updateFoodRequest(
             @RequestParam int requestId,
