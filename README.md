@@ -1,3 +1,25 @@
+# 4156 Team Project - ASE Aces
+## Building, Running, and Testing a Local Instance
+- To run the service: `mvn spring-boot:run`
+- To run all tests: `mvn test`
+- To see the test coverage: `mvn jacoco:report` and open `target/site/jacoco/index.html` in a 
+  web browser
+- To run the style checker: `mvn checkstyle:check`
+- To do static analysis with PMD: `mvn pmd:check`
+
+---
+
+## Third-Party Code
+
+| Purpose                | Source        | Location in Code                                 |
+| ---------------------- | ------------- | ------------------------------------------------ |
+| [Haversine formula][1] | [Baeldung][2] | `Location.distance()` and `Location.haversine()` |
+
+[1]: https://en.wikipedia.org/wiki/Haversine_formula
+[2]: https://www.baeldung.com/java-find-distance-between-points
+
+---
+
 ## **FoodRequest Endpoints**
 
 ### **POST /api/foodRequests/create**
@@ -199,3 +221,198 @@ The retrieved information includes the account holder's name and the account ID.
   `404 Not Found` status code. Ensure that valid IDs are used in the requests.
 
 ---
+## FoodListing Endpoints
+### POST /createFoodListing
+**Expected Input Parameters:**
+- `clientId` (int): The ID of the client to associate with the account
+- `accountId` (int): The ID of the (provider) account trying to create a listing
+- `foodType` (String): The food type of the listing
+- `quantityListed` (int): The quantity of the item listed
+- `latitude` (float): The latitude of the pick-up location
+- `longitude` (float): The longitude of the pick-up location
+
+**Expected Output:**
+- The method attempts to create and store a new food listing for an account with `accountId` in the client with `clientId`.
+
+**Upon success:**
+- A status code of `201 Created` and a response body with the message "Food listing created successfully with ID: {listingId}"
+
+**Upon failure:**
+- A status code of `404 Not Found` if the specified client or account does not exist, with a response body containing the message:
+  ```json
+  {
+    "error": "Client ID or account ID not found."
+  }
+  ```
+- A status code of `500 Internal Server Error` with a response body containing the message "Failed to create food listing" if an unexpected error occurs during the creation or storage of the listing.
+
+### GET /getFoodListings
+**Expected Input Parameters:**
+- `clientId` (int): The ID of the client making the request
+
+**Expected Output:**
+- The method retrieves all food listings under the client with `clientId`.
+
+**Upon success:**
+- A status code of `200 OK` and a response body containing a collection of food listings under the specified client.
+
+**Upon failure:**
+- A status code of `404 Not Found` if the specified client does not exist with a response body containing the message:
+    ```json
+    {
+      "error": "Client ID not found."
+    }
+    ```
+- A status code of `404 Not Found` if there are no listings for the specified client
+
+### GET /getNearbyListings
+**Expected Input Parameters:**
+- `clientId` (int): The ID of client trying to get listings near a query location
+- `latitude` (float): The latitude of the query location
+- `longitude` (float): The longitude of the query location
+- `maxDistance` (int, optional with default value of 5): The maximum distance from the query location to consider when searching for food listings; expected to be greater than 0
+
+**Expected Output:**
+- The method retrieves food listings for a client with `clientId` that are within `maxDistance` of a given location (`latitude`, `longitude`).
+
+**Upon success:**
+- A status code of `200 OK` and a response body containing a collection of food listings located within a maximum distance from the given location.
+
+**Upon failure:**
+* A status code of `404 Not Found` if the specified client does not exist with a response body containing the message:
+  ```json
+  {
+    "error": "Client ID not found."
+  }
+  ```
+* A status code of `404 Not Found` if there are no listings within the specified distance of the specified location
+
+### GET /getFoodListingsUnderAccount
+**Expected Input Parameters:**
+- `clientId` (int): The ID of the client to associate with the account
+- `accountId` (int): The ID of the (provider) account trying to fetch their listings
+
+**Expected Output:**
+- The method retrieves all food listings under an account with `accountId` in a client with `clientId`.
+
+**Upon success:**
+- A status code of `200 OK` and a response body containing a collection of food listings under the specified account.
+
+**Upon failure:**
+* A status code of `404 Not Found` if the specified client or account does not exist with a response body containing the message
+  ```json
+  {
+    "error": "Client ID or account ID not found."
+  }
+  ```
+* A status code of `404 Not Found` if there are no listings under the specified account
+* A status code of `401 Unauthorized` if the account with the specified `accountId` is not of type `AccountType.PROVIDER`
+
+### GET /getRequestsForListing
+**Expected Input Parameters:**
+- `clientId` (int): The ID of the client to associate with the account
+- `accountId` (int): The ID of the (provider) account trying to get the requests made for one of their listings
+- `listingId` (int): The ID of the listing to find requests for
+
+**Expected Output:**
+- The method retrieves all requests made for a listing with `listingId` under a provider account with `accountId` using the client with `clientId`.
+
+**Upon success:**
+- A status code of `200 OK` and a response body containing a collection of requests for the specified food listing.
+
+**Upon failure:**
+- A status code of `404 Not Found` if there is no listing with `listingId` under the account with `accountId` in the client with `clientId` and a response body with the message
+    ```json
+    {
+      "error": "Listing with ID {listingId} not found under client with ID {clientId} and account with ID {accountId}."
+    }
+    ```
+- A status code of `401 Unauthorized` if the account with the specified `accountId` is not of type `AccountType.PROVIDER`.
+    ```json
+    {
+      "error": "Expected account holder to be a PROVIDER."
+    }
+    ```
+- A status code of `404 Not Found` if there are no requests for the specified listing.
+
+### PATCH /fulfillRequest
+**Expected Input Parameters:**
+- `clientId` (int): The ID of the client to associate with the account
+- `accountId` (int): The ID of the (provider) account trying to fullfill a request for one of their listings and update the listing accordingly
+- `listingId` (int): The ID of the listing that the request is made for
+- `quantityRequested` (int, optional with default value of 1): The quantity of items requested
+
+**Expected Output:**
+- The method attempts to fulfill a request for a food listing with `listingId` (under a provider account with `accountId` in the client with `clientId`) by decrementing the quantity of items listed by the requested amount.
+
+**Upon success:**
+- A status code of `200 OK` and a response body containing the message:
+  ```json
+  {
+    "message": "Updated Successfully."
+  }
+  ```
+
+**Upon failure:**
+- A status code of `404 Not Found` if there is no listing with `listingId` under the account with `accountId` in the client with `clientId`.
+    ```json
+    {
+      "error": "Listing with ID {listingId} not found under client with ID {clientId} and account with ID {accountId}."
+    }
+    ```
+- A status code of `401 Unauthorized` if the account with the specified `accountId` is not of type `AccountType.PROVIDER`.
+    ```json
+    {
+      "error": "Expected account holder to be a PROVIDER."
+    }
+    ```
+- A status code of `400 Bad Request` if the current `quantityListed` is less than the `quantityRequested`.
+    ```json
+    {
+      "error": "Quantity listed ({currQuantityListed}) for listing with ID {listingId} cannot satisfy quantity requested ({quantityRequested})."
+    }
+    ```
+
+### PUT /updateFoodListing
+**Expected Input Parameters:**
+- `clientId` (int): The ID of the client to associate with the account
+- `accountId` (int): The ID of the account trying to update one of their listings
+- `listingId` (int): The ID of the listing to update
+- `newFoodType` (String, optional): A new food type for the listing
+- `newLatitude` (Float, optional): A new latitude for the listing's pick-up location
+- `newLongitude` (Float, optional): A new longitude for the listing's pick-up location
+- `newQuantityListed` (Integer, optional): A new quantity for the item listed
+
+**Expected Output:**
+- The method updates various attributes of the food listing with `listingId` (under the account with `accountId` in the client with `clientId`), such as food type, location, and quantity listed.
+
+**Upon success:**
+- A status code of `200 OK` and a response body containing the message:
+  ```json
+  {
+    "message": "Updated Successfully."
+  }
+  ```
+
+**Upon failure:**
+* A status code of `404 Not Found` if there is no listing with the specified `listingId` under the account with the specified `accountId` in the client with `clientId`.
+  ```json
+  {
+    "error": "Listing with ID {listingId} not found under client with ID {clientId} and account with ID {accountId}."
+  }
+  ```
+* A status code of `401 Unauthorized` if the account with the specified `accountId` is not of type `AccountType.PROVIDER`.
+  ```json
+  {
+    "error": "Expected account holder to be a PROVIDER."
+  }
+  ```
+
+### Operational Guidelines
+- **Order of API calls:**
+  - `/getFoodListings` and `/getNearbyListings` should only be called with `clientId` after the corresponding client has been created
+  - `/createFoodListing` should only be called with `clientId` and `accountId` after the corresponding client and account have been created
+  - `/getListingsUnderAccount`, `/getRequestsForListing`, `/fulfillRequest`, `/updateFoodListing` should only be called with `clientId`, `accountId`, and `listingId` after the corresponding listing has been created by the account in the client
+- **Error Handling:** If an invalid `clientId`, `accountId`, and/or `listingId` is provided, the service will return a `404 Not Found` status code with a corresonding error message.
+
+
