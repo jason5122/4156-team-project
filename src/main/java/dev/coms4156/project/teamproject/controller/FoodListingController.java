@@ -346,7 +346,7 @@ public class FoodListingController {
    *     If the listing was successfully updated, returns with status code OK and a corresponding
    *     message.
    */
-  @PutMapping("/updateFoodListing")
+  @PatchMapping("/updateFoodListing")
   public ResponseEntity<?> updateFoodListing(
       @RequestParam int clientId, @RequestParam int accountId, @RequestParam int listingId,
       @RequestParam(required = false) String newFoodType,
