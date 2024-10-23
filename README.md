@@ -7,6 +7,10 @@
 - To run the style checker: `mvn checkstyle:check`
 - To do static analysis with PMD: `mvn pmd:check`
 
+## Demo URL
+
+[http://34.48.194.87:8080](http://34.48.194.87:8080)
+
 ---
 
 ## Third-Party Code
