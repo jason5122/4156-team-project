@@ -377,7 +377,7 @@ The retrieved information includes the account holder's name and the account ID.
     }
     ```
 
-### PUT /updateFoodListing
+### PATCH /updateFoodListing
 **Expected Input Parameters:**
 - `clientId` (int): The ID of the client to associate with the account
 - `accountId` (int): The ID of the account trying to update one of their listings
