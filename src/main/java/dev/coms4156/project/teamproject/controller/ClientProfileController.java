@@ -3,6 +3,7 @@ package dev.coms4156.project.teamproject.controller;
 import dev.coms4156.project.teamproject.model.ClientProfile;
 import dev.coms4156.project.teamproject.repository.ClientProfileRepository;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,4 +65,11 @@ public class ClientProfileController {
     body.put("client_id", client.getClientId());
     return new ResponseEntity<>(body, HttpStatus.OK);
   }
+
+  @GetMapping("/all")
+  public ResponseEntity<List<ClientProfile>> getAllClientProfiles() {
+    List<ClientProfile> clients = clientProfileRepository.findAll();
+    return new ResponseEntity<>(clients, HttpStatus.OK);
+  }
+
 }
