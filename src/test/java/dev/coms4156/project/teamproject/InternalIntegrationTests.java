@@ -23,16 +23,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 /**
- * Integration tests for the FoodListingController class.
+ * Integration tests for the ClientProfileController, AccountProfileController,
+ * and FoodListingController classes.
  *
  * <p>This class tests various operations related to food listings, such as
- * creating listings, making requests for listings, etc.
+ * creating listings, making requests for listings, etc. These operations integrate with
+ * CRUD operations from the ClientProfileController and AccountProfileController classes,
+ * since they must be performed by existing accounts under existing clients. Further,
+ * FoodListingController integrates with FoodRequestController, as requests must be made by
+ * recipients for existing listings posted by providers under the same client.
  */
 @DataJpaTest
 @Import({FoodListingController.class,
     ClientProfileController.class,
     AccountProfileController.class})
-public class FoodListingControllerIntegrationTests {
+public class InternalIntegrationTests {
 
   @Autowired
   private FoodListingController foodListingController;
