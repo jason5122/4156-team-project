@@ -40,10 +40,6 @@ import org.springframework.test.context.ActiveProfiles;
  * <p>These tests validate the behavior of FoodListing-related API operations
  * such as creating and retrieving food listings.
  */
-//@DataJpaTest
-//@Import({FoodListingController.class,
-//    ClientProfileController.class,
-//    AccountProfileController.class})
 @SpringBootTest
 @ActiveProfiles("test")
 public class FoodListingControllerUnitTests {
