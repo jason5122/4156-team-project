@@ -31,7 +31,7 @@ import org.springframework.test.context.ActiveProfiles;
  */
 @SpringBootTest
 @ActiveProfiles("test")
-public class FoodListingControllerMockTests {
+public class FoodListingControllerRobustnessTests {
 
   @MockBean
   private FoodListingRepository foodListingRepository;
