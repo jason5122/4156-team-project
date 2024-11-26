@@ -4,12 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.mysql.cj.xdevapi.Client;
-import dev.coms4156.project.teamproject.controller.AccountProfileController;
-import dev.coms4156.project.teamproject.controller.ClientProfileController;
 import dev.coms4156.project.teamproject.controller.FoodListingController;
 import dev.coms4156.project.teamproject.model.AccountProfile;
 import dev.coms4156.project.teamproject.model.ClientProfile;
@@ -26,10 +22,8 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -40,10 +34,6 @@ import org.springframework.test.context.ActiveProfiles;
  * <p>These tests validate the behavior of FoodListing-related API operations
  * such as creating and retrieving food listings.
  */
-//@DataJpaTest
-//@Import({FoodListingController.class,
-//    ClientProfileController.class,
-//    AccountProfileController.class})
 @SpringBootTest
 @ActiveProfiles("test")
 public class FoodListingControllerUnitTests {

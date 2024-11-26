@@ -20,7 +20,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -48,14 +47,12 @@ public class FoodRequestControllerUnitTests {
 
   private ClientProfile client;
   private static final int clientId = 0;
-  private AccountProfile providerAccount;
   private static final int providerId = 0;
   private AccountProfile recipientAccount;
   private static final int recipientId = 1;
   private FoodListing listing1;
   private static final int listing1Id = 0;
   private FoodListing listing2;
-  private static final int listing2Id = 1;
 
   @BeforeEach
   public void setUp() {
@@ -63,7 +60,7 @@ public class FoodRequestControllerUnitTests {
     client = new ClientProfile();
 
     // Create and store a provider account
-    providerAccount = new AccountProfile(
+    AccountProfile providerAccount = new AccountProfile(
         client, AccountProfile.AccountType.PROVIDER,
         "8897263717", "sweetgreen"
     );
