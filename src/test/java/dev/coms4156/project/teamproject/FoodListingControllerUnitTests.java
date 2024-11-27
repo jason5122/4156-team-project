@@ -438,8 +438,7 @@ public class FoodListingControllerUnitTests {
 
   @Test
   public void fulfillRequestMissingClientTest() {
-    ResponseEntity<?> response = foodListingController.fulfillRequest(
-        111, providerId, 1, 1);
+    ResponseEntity<?> response = foodListingController.fulfillRequest(111, 1, 1);
 
     // Check status code
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -448,8 +447,7 @@ public class FoodListingControllerUnitTests {
   @Test
   public void fulfillRequestMissingAccountTest() {
 
-    ResponseEntity<?> response = foodListingController.fulfillRequest(
-        client.getClientId(), providerId, 1, 1);
+    ResponseEntity<?> response = foodListingController.fulfillRequest(client.getClientId(), 1, 1);
 
     // Check status code
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -460,8 +458,7 @@ public class FoodListingControllerUnitTests {
 
     int badListingId = listing1Id + 2; // No listing has this ID
 
-    ResponseEntity<?> response = foodListingController.fulfillRequest(
-        client.getClientId(), providerId, badListingId, 1);
+    ResponseEntity<?> response = foodListingController.fulfillRequest(client.getClientId(), badListingId, 1);
 
     // Check status code
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -469,12 +466,10 @@ public class FoodListingControllerUnitTests {
 
   @Test
   public void fulfillRequestOkTest() {
-    when(foodListingRepository.findByClientAndAccountAndListingId(
-        eq(client), eq(providerAccount), eq(listing2Id)
+    when(foodListingRepository.findByClientAndListingId(
+        eq(client), eq(listing2Id)
     )).thenReturn(Optional.of(listing2));
-    ResponseEntity<?> response = foodListingController.fulfillRequest(
-        client.getClientId(), providerId,
-        listing2Id, 30);
+    ResponseEntity<?> response = foodListingController.fulfillRequest(client.getClientId(), listing2Id, 30);
 
     // Check status code
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -482,28 +477,13 @@ public class FoodListingControllerUnitTests {
 
   @Test
   public void fulfillRequestBadRequestTest() {
-    when(foodListingRepository.findByClientAndAccountAndListingId(
-        eq(client), eq(providerAccount), eq(listing1Id)
+    when(foodListingRepository.findByClientAndListingId(
+        eq(client), eq(listing1Id)
     )).thenReturn(Optional.of(listing1));
-    ResponseEntity<?> response = foodListingController.fulfillRequest(
-        client.getClientId(), providerId, listing1Id, 31);
+    ResponseEntity<?> response = foodListingController.fulfillRequest(client.getClientId(), listing1Id, 31);
 
     // Check status code
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-  }
-
-  @Test
-  public void fulfillRequestUnauthorizedAccountTest() {
-    when(foodListingRepository.findByClientAndAccountAndListingId(
-        eq(client), eq(providerAccount), eq(listing1Id)
-    )).thenReturn(Optional.of(listing1));
-
-    ResponseEntity<?> response = foodListingController.fulfillRequest(
-        client.getClientId(), recipientId,
-        listing1Id, 12);
-
-    // Check status code
-    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
   }
 
   @Test
