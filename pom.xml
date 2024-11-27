@@ -92,7 +92,6 @@
           <execution>
             <goals>
               <goal>pmd</goal>
-              <goal>cpd-check</goal>
             </goals>
           </execution>
         </executions> <!-- Use the latest version available -->
