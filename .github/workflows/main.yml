@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Build with Maven
+        working-directory: ./team-project
+        run: mvn clean install
+
+      - name: Run tests
+        working-directory: ./team-project
+        run: mvn test
+
+      - name: Run Checkstyle
+        working-directory: ./team-project
+        run: mvn checkstyle:checkstyle
+
+      - name: Run PMD
+        working-directory: ./team-project
+        run: mvn pmd:check
+
+      - name: Generate JaCoCo Branch Coverage Report
+        working-directory: ./team-project
+        run: mvn jacoco:report
+
+      - name: Upload Checkstyle Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: checkstyle-report
+          path: ./team-project/target/site/checkstyle.html
+
+      - name: Upload PMD Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: pmd-report
+          path: ./team-project/target/pmd.xml
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: ./team-project/target/site/jacoco/index.html
