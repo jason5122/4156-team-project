@@ -61,6 +61,10 @@ public class FoodListingControllerUnitTests {
   private final int listing2Id = 1;
   private FoodListing listing3;
 
+  /**
+   * Set up for controller tests. Mocks normal behavior of repositories
+   * to isolate the testing of internal implementation from external library.
+   */
   @BeforeEach
   public void setup() {
     // Make sure repository is in a clean state
@@ -126,7 +130,6 @@ public class FoodListingControllerUnitTests {
 
   @Test
   public void createFoodListingOkTest() {
-//    when(foodListingRepository.save(any())).thenReturn(listing1);
     ResponseEntity<?> response = foodListingController.createFoodListing(
         client.getClientId(), providerId, "snack",
         25, 34.052f, -118.243f);
@@ -314,9 +317,9 @@ public class FoodListingControllerUnitTests {
 
     // Create client profile 2
     ClientProfile client2 = new ClientProfile();
-    int client2Id = client2.getClientId();
+    final int client2Id = client2.getClientId();
     // Create account under client 2
-    AccountProfile account2 = new AccountProfile(
+    final AccountProfile account2 = new AccountProfile(
         client2, AccountProfile.AccountType.PROVIDER, "0987654321", "a");
     // Mock
     List<FoodListing> mockedReturn2 = new ArrayList<>();
@@ -324,7 +327,8 @@ public class FoodListingControllerUnitTests {
     mockedReturn2.add(listing3);
     when(foodListingRepository.findByClient(client2)).thenReturn(mockedReturn2);
     when(clientProfileRepository.findById(client2Id)).thenReturn(Optional.of(client2));
-    when(accountProfileRepository.findById(account2.getAccountId())).thenReturn(Optional.of(account2));
+    when(accountProfileRepository.findById(account2.getAccountId()))
+        .thenReturn(Optional.of(account2));
 
     // Should only find listing2
     ResponseEntity<?> response2 = foodListingController.getNearbyListings(
@@ -389,7 +393,7 @@ public class FoodListingControllerUnitTests {
   @Test
   public void getFoodListingsUnderAccountNoneFoundTest() {
 
-    AccountProfile account2 = new AccountProfile(client, AccountProfile.AccountType.PROVIDER,
+    final AccountProfile account2 = new AccountProfile(client, AccountProfile.AccountType.PROVIDER,
         "1234567890", "x");
 
     // Save listings under account 2, then should find no listings when querying account 1
@@ -458,7 +462,8 @@ public class FoodListingControllerUnitTests {
 
     int badListingId = listing1Id + 2; // No listing has this ID
 
-    ResponseEntity<?> response = foodListingController.fulfillRequest(client.getClientId(), badListingId, 1);
+    ResponseEntity<?> response = foodListingController.fulfillRequest(
+        client.getClientId(), badListingId, 1);
 
     // Check status code
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -469,7 +474,8 @@ public class FoodListingControllerUnitTests {
     when(foodListingRepository.findByClientAndListingId(
         eq(client), eq(listing2Id)
     )).thenReturn(Optional.of(listing2));
-    ResponseEntity<?> response = foodListingController.fulfillRequest(client.getClientId(), listing2Id, 30);
+    ResponseEntity<?> response = foodListingController
+        .fulfillRequest(client.getClientId(), listing2Id, 30);
 
     // Check status code
     assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -480,7 +486,8 @@ public class FoodListingControllerUnitTests {
     when(foodListingRepository.findByClientAndListingId(
         eq(client), eq(listing1Id)
     )).thenReturn(Optional.of(listing1));
-    ResponseEntity<?> response = foodListingController.fulfillRequest(client.getClientId(), listing1Id, 31);
+    ResponseEntity<?> response = foodListingController.fulfillRequest(
+        client.getClientId(), listing1Id, 31);
 
     // Check status code
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

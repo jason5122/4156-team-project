@@ -100,6 +100,11 @@ public class AccountProfile implements Serializable {
     return name;
   }
 
+  /**
+   * Gets the client.
+   *
+   * @return The client.
+   */
   public ClientProfile getClient() {
     return client;
   }

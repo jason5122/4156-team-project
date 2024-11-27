@@ -75,7 +75,8 @@ class ExternalIntegrationTests {
     FoodRequest savedRequest = foodRequestRepository.save(foodRequest);
 
     // Read FoodRequest by ID
-    Optional<FoodRequest> retrievedRequest = foodRequestRepository.findById(savedRequest.getRequestId());
+    Optional<FoodRequest> retrievedRequest = foodRequestRepository.findById(
+        savedRequest.getRequestId());
 
     // Assertions
     assertTrue(retrievedRequest.isPresent());
@@ -114,7 +115,7 @@ class ExternalIntegrationTests {
         new AccountProfile(client, AccountProfile.AccountType.RECIPIENT, "1234567890", "John Doe"));
     FoodListing foodListing = foodListingRepository.save(
         new FoodListing(client, account, "Potatoes", 50,
-            LocalDateTime.now(),12.345f, 67.890f));
+            LocalDateTime.now(), 12.345f, 67.890f));
 
     // Create and save FoodRequest
     FoodRequest foodRequest = new FoodRequest(client, account, foodListing, 20);
@@ -124,7 +125,8 @@ class ExternalIntegrationTests {
     foodRequestRepository.deleteById(savedRequest.getRequestId());
 
     // Verify deletion
-    Optional<FoodRequest> deletedRequest = foodRequestRepository.findById(savedRequest.getRequestId());
+    Optional<FoodRequest> deletedRequest = foodRequestRepository
+        .findById(savedRequest.getRequestId());
     assertFalse(deletedRequest.isPresent());
   }
 }

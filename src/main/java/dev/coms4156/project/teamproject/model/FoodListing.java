@@ -88,50 +88,99 @@ public class FoodListing implements Serializable {
     this.longitude = longitude;
   }
 
+  /**
+   * Gets the food type.
+   * @return The food type.
+   */
   public String getFoodType() {
     return this.foodType;
   }
 
+  /**
+   * Sets the food type.
+   * @param foodType The new food type.
+   */
   public void setFoodType(String foodType) {
     this.foodType = foodType;
   }
 
+  /**
+   * Gets the quantity listed.
+   * @return The quantity listed
+   */
   public int getQuantityListed() {
     return this.quantityListed;
   }
 
+  /**
+   * Sets the quantity listed
+   * @param quantityListed The new quantity listed
+   */
   public void setQuantityListed(int quantityListed) {
     this.quantityListed = quantityListed;
   }
 
+  /**
+   * Gets earliest pick-up time
+   * @return The earliest pick-up time
+   */
   public LocalDateTime getEarliestPickUpTime() {
     return this.earliestPickUpTime;
   }
 
+  /**
+   * Sets the earliest pick-up time
+   * @param earliestPickUpTime The new earliest pick-up time
+   */
   public void setEarliestPickUpTime(LocalDateTime earliestPickUpTime) {
     this.earliestPickUpTime = earliestPickUpTime;
   }
 
+  /**
+   * Gets the latitude
+   * @return The latitude
+   */
   public float getLatitude() {
     return this.latitude;
   }
 
+  /**
+   * Sets the latitude
+   * @param latitude The new latitude
+   */
   public void setLatitude(float latitude) {
     this.latitude = latitude;
   }
 
+  /**
+   * Gets the longitude
+   * @return The longitude
+   */
   public float getLongitude() {
     return this.longitude;
   }
 
+  /**
+   * Sets the longitude
+   * @param longitude The new longitude
+   */
   public void setLongitude(float longitude) {
     this.longitude = longitude;
   }
 
+  /**
+   * Gets the listing ID
+   * @return The listing ID
+   */
   public int getListingId() {
     return this.listingId;
   }
 
+  /**
+   * Returns whether two FoodListing objects are equal based on their attributes.
+   * @param other The other FoodListing object
+   * @return Whether this FoodListing is equal to the other FoodListing
+   */
   @Override
   public boolean equals(Object other) {
     if (!(other instanceof FoodListing otherListing)) {
@@ -146,6 +195,11 @@ public class FoodListing implements Serializable {
         && this.longitude == otherListing.getLongitude();
   }
 
+  /**
+   * Computes a hash of this FoodListing object
+   * based on its attributes
+   * @return A hash of this FoodListing object
+   */
   @Override
   public int hashCode() {
     return Objects.hash(client, account, foodType, quantityListed, earliestPickUpTime,

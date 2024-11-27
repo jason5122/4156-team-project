@@ -26,7 +26,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-
+/**
+ * Unit tests for FoodListingController.
+ * Tests every single method for success case, different failure cases,
+ * and when applicable, functionality under multiple clients.
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 public class FoodRequestControllerUnitTests {
@@ -54,6 +58,10 @@ public class FoodRequestControllerUnitTests {
   private static final int listing1Id = 0;
   private FoodListing listing2;
 
+  /**
+   * Set up for controller tests. Mocks normal behavior of repositories
+   * to isolate the testing of internal implementation from external library.
+   */
   @BeforeEach
   public void setUp() {
     // Create and store a client
@@ -165,7 +173,7 @@ public class FoodRequestControllerUnitTests {
     Optional<FoodRequest> optional = foodRequestRepository.findById(request.getRequestId());
     if (optional.isPresent()) {
       FoodRequest updated = optional.get();
-      assert(updated.getQuantityRequested() == 5);
+      assert updated.getQuantityRequested() == 5;
     } else {
       fail();
     }

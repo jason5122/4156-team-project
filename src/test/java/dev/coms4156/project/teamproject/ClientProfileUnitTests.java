@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
+/**
+ * Tests the constructor of ClientProfile.
+ */
 @SpringBootTest
 @ContextConfiguration
 public class ClientProfileUnitTests {

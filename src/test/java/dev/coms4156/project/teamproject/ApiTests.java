@@ -16,8 +16,11 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+/**
+ * API tests for all endpoints of all controllers.
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class APITests {
+public class ApiTests {
   private static int client1Id;
   private static int client2Id;
   private static int client1ProviderId;
@@ -482,7 +485,7 @@ public class APITests {
         .queryParam("requestId", client2Request1Id)
         .when().get("/get").then().statusCode(200)
         .extract().response();
-        JsonPath responseBody = response.jsonPath();
+    JsonPath responseBody = response.jsonPath();
     int qtyReq = responseBody.getInt("quantity_requested");
     assertEquals(127, qtyReq);
   }
