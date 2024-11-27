@@ -260,16 +260,12 @@ public class FoodListingController {
 
   /**
    * API endpoint for fulfilling a request for the listing with `listingId` under a provider account
-   * with `accountId` in the client with `clientId`. Expects the account to be of type
-   * `AccountType.PROVIDER`. Updates the listing by decrementing `quantityListed` by
+   * in the client with `clientId`. Updates the listing by decrementing `quantityListed` by
    * `quantityRequested`. If `quantityRequested` is not specified, its default value is 1. If the
    * current `quantityListed` is less than`quantityRequested`, returns a response with status code
    * BAD_REQUEST.
    *
    * @param clientId  ID of the client
-   * @param accountId ID of the provider account trying to fulfill a request for one of their
-   *                  listings and update this listing accordingly
-   * @param listingId ID of the listing that the request is made for
    * @return If there is no listing with `listingId` under an account with `accountId` in the client
    *     with `clientId`, returns a ResponseEntity with status code NOT_FOUND. If the account with
    *     `accountId` is not of type `AccountType.PROVIDER`, returns with status code UNAUTHORIZED.
@@ -277,7 +273,8 @@ public class FoodListingController {
    *     status code OK. Otherwise, returns with status code BAD_REQUEST.
    */
   @PatchMapping("/fulfillRequest")
-  public ResponseEntity<?> fulfillRequest(@RequestParam int clientId, @RequestParam int listingId, @RequestParam int quantityRequested) {
+  public ResponseEntity<?> fulfillRequest(@RequestParam int clientId, @RequestParam int listingId,
+                                          @RequestParam int quantityRequested) {
 
     // Fetch client and account data from database
     Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
