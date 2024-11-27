@@ -342,12 +342,11 @@ The retrieved information includes the account holder's name and the account ID.
 ### PATCH /fulfillRequest
 **Expected Input Parameters:**
 - `clientId` (int): The ID of the client to associate with the account
-- `accountId` (int): The ID of the (provider) account trying to fullfill a request for one of their listings and update the listing accordingly
 - `listingId` (int): The ID of the listing that the request is made for
-- `quantityRequested` (int, optional with default value of 1): The quantity of items requested
+- `quantityRequested` (int): The quantity of items requested
 
 **Expected Output:**
-- The method attempts to fulfill a request for a food listing with `listingId` (under a provider account with `accountId` in the client with `clientId`) by decrementing the quantity of items listed by the requested amount.
+- The method attempts to fulfill a request for a food listing with `listingId` by decrementing the quantity of items listed by the requested amount.
 
 **Upon success:**
 - A status code of `200 OK` and a response body containing the message:
@@ -358,7 +357,7 @@ The retrieved information includes the account holder's name and the account ID.
   ```
 
 **Upon failure:**
-- A status code of `404 Not Found` if there is no listing with `listingId` under the account with `accountId` in the client with `clientId`.
+- A status code of `404 Not Found` if there is no listing with `listingId` in the client with `clientId`.
     ```json
     {
       "error": "Listing with ID {listingId} not found under client with ID {clientId} and account with ID {accountId}."
