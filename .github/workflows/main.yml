@@ -23,39 +23,39 @@ jobs:
           distribution: 'corretto'
 
       - name: Build with Maven
-        working-directory: ./team-project
+        working-directory: .
         run: mvn clean install
 
       - name: Run tests
-        working-directory: ./team-project
+        working-directory: .
         run: mvn test
 
       - name: Run Checkstyle
-        working-directory: ./team-project
+        working-directory: .
         run: mvn checkstyle:checkstyle
 
       - name: Run PMD
-        working-directory: ./team-project
+        working-directory: .
         run: mvn pmd:check
 
       - name: Generate JaCoCo Branch Coverage Report
-        working-directory: ./team-project
+        working-directory: .
         run: mvn jacoco:report
 
       - name: Upload Checkstyle Report
         uses: actions/upload-artifact@v3
         with:
           name: checkstyle-report
-          path: ./team-project/target/site/checkstyle.html
+          path: ./target/site/checkstyle.html
 
       - name: Upload PMD Report
         uses: actions/upload-artifact@v3
         with:
           name: pmd-report
-          path: ./team-project/target/pmd.xml
+          path: ./target/pmd.xml
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v3
         with:
           name: coverage-report
-          path: ./team-project/target/site/jacoco/index.html
+          path: ./target/site/jacoco/index.html
