@@ -87,7 +87,6 @@
           <rulesets>
             <ruleset>/rulesets/java/quickstart.xml</ruleset>
           </rulesets>
-          <!-- Configuration options, if any -->
         </configuration>
         <executions>
           <execution>

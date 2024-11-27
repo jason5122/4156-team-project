@@ -27,6 +27,11 @@ public class ClientProfile implements Serializable {
   public ClientProfile() {
   }
 
+  /**
+   * Gets the client.
+   *
+   * @return The client.
+   */
   public int getClientId() {
     return this.clientId;
   }

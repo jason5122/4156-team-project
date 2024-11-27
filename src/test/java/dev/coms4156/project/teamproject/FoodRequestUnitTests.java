@@ -71,7 +71,9 @@ class FoodRequestUnitTests {
     FoodRequest timeRequest = new FoodRequest(client, account, foodListing, 5);
     LocalDateTime after = LocalDateTime.now();
 
-    assertTrue(timeRequest.getRequestTime().isAfter(before) || timeRequest.getRequestTime().isEqual(before));
-    assertTrue(timeRequest.getRequestTime().isBefore(after) || timeRequest.getRequestTime().isEqual(after));
+    assertTrue(timeRequest.getRequestTime().isAfter(before)
+        || timeRequest.getRequestTime().isEqual(before));
+    assertTrue(timeRequest.getRequestTime().isBefore(after)
+        || timeRequest.getRequestTime().isEqual(after));
   }
 }

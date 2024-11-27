@@ -11,11 +11,19 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Unit tests for the Donation class.
+ * Tests the getters and setters.
+ */
 public class DonationUnitTests {
   private FoodListing foodListing;
   private Donation donation;
   private LocalDateTime pickUpTime;
 
+  /**
+   * Set up for testing.
+   * Create a client, account, and listing to create a donation.
+   */
   @BeforeEach
   void setUp() {
     // Initialize dependencies
@@ -64,7 +72,8 @@ public class DonationUnitTests {
   void testGetFoodListing() {
     assertEquals(foodListing.getListingId(), donation.getFoodListing().getListingId());
     assertEquals(foodListing.getQuantityListed(), donation.getFoodListing().getQuantityListed());
-    assertEquals(foodListing.getFoodType(), donation.getFoodListing().getFoodType());  }
+    assertEquals(foodListing.getFoodType(), donation.getFoodListing().getFoodType());
+  }
 
   private void setDonationIdUsingReflection(Donation donation, int donationId) {
     try {

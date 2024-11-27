@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
-import dev.coms4156.project.teamproject.controller.AccountProfileController;
 import dev.coms4156.project.teamproject.controller.ClientProfileController;
 import dev.coms4156.project.teamproject.model.ClientProfile;
 import dev.coms4156.project.teamproject.repository.ClientProfileRepository;
@@ -19,6 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
+/**
+ * Tests for ClientProfileController.
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 public class ClientProfileControllerUnitTests {
