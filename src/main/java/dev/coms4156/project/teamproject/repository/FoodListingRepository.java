@@ -22,4 +22,6 @@ public interface FoodListingRepository extends JpaRepository<FoodListing, Intege
   Optional<FoodListing> findByClientAndAccountAndListingId(ClientProfile client,
       AccountProfile account,
       int listingId);
+
+  Optional<FoodListing> findByClientAndListingId(ClientProfile client, int listingId);
 }

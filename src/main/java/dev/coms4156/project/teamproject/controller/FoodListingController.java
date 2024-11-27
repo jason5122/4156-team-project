@@ -277,36 +277,25 @@ public class FoodListingController {
    *     status code OK. Otherwise, returns with status code BAD_REQUEST.
    */
   @PatchMapping("/fulfillRequest")
-  public ResponseEntity<?> fulfillRequest(
-      @RequestParam int clientId, @RequestParam int accountId, @RequestParam int listingId,
-      @RequestParam(required = false, defaultValue = "1") int quantityRequested) {
+  public ResponseEntity<?> fulfillRequest(@RequestParam int clientId, @RequestParam int listingId, @RequestParam int quantityRequested) {
 
     // Fetch client and account data from database
     Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
-    Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId);
-    if (clientOptional.isEmpty() || accountOptional.isEmpty()) {
+    if (clientOptional.isEmpty()) {
       Map<String, Object> body = new HashMap<>();
-      body.put("error", "Client ID or account ID not found.");
+      body.put("error", "Client ID not found.");
       return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
     ClientProfile client = clientOptional.get();
-    AccountProfile account = accountOptional.get();
-
-    // Only a provider should be calling this endpoint
-    if (account.getAccountType() != AccountProfile.AccountType.PROVIDER) {
-      Map<String, Object> body = new HashMap<>();
-      body.put("error", "Expected account holder to be a PROVIDER.");
-      return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
-    }
 
     // Find the listing that will satisfy a request
     Optional<FoodListing> listingOptional =
-        foodListingRepository.findByClientAndAccountAndListingId(client, account, listingId);
+        foodListingRepository.findByClientAndListingId(client, listingId);
     if (listingOptional.isEmpty()) {
       Map<String, Object> body = new HashMap<>();
       body.put("error", "Listing with ID " + listingId + " not found "
-          + "under client with ID " + clientId + " and account with ID " + accountId + ".");
+          + "under client with ID " + clientId + ".");
       return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
