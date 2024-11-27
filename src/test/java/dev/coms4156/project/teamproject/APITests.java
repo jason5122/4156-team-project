@@ -4,7 +4,6 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import dev.coms4156.project.teamproject.model.AccountProfile;
@@ -538,8 +537,8 @@ public class APITests {
         .build();
     given().spec(spec)
         .queryParam("clientId", client2Id)
-        .queryParam("accountId", client2ProviderId)
         .queryParam("listingId", client2Listing1Id)
+        .queryParam("quantityRequested", 2)
         .when().patch("/fulfillRequest")
         .then().assertThat()
         .statusCode(200)
@@ -557,7 +556,7 @@ public class APITests {
         .queryParam("listingId", client2Listing1Id)
         .queryParam("newFoodType", "coconuts")
         .queryParam("newLatitude", 17.668f)
-        .when().put("/updateFoodListing")
+        .when().patch("/updateFoodListing")
         .then().assertThat()
         .statusCode(200)
         .body("message", equalTo("Updated Successfully."));
