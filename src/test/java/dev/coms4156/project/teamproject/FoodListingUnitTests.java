@@ -1,10 +1,13 @@
 package dev.coms4156.project.teamproject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import dev.coms4156.project.teamproject.model.AccountProfile;
 import dev.coms4156.project.teamproject.model.ClientProfile;
 import dev.coms4156.project.teamproject.model.FoodListing;
+import dev.coms4156.project.teamproject.model.FoodRequest;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,8 +62,24 @@ public class FoodListingUnitTests {
 
   @Test
   void testEqualsAndHashCode() {
-    FoodListing anotherListing = new FoodListing(client, account, "Fruits", 10, earliestPickUpTime, 34.0522f, -118.2437f);
-    assertEquals(foodListing, anotherListing);
+    FoodListing anotherListing = new FoodListing(client, account, "Fruits",
+        10, earliestPickUpTime, 34.0522f, -118.2437f);
+    assert(foodListing.equals(anotherListing));
+    FoodListing anotherListing2 = new FoodListing(client, account, "Jack fruits",
+        10, earliestPickUpTime, 34.0522f, -118.2437f);
+    assert(!foodListing.equals(anotherListing2));
+    FoodListing anotherListing3 = new FoodListing(client, account, "Fruits",
+        11, earliestPickUpTime, 34.0522f, -118.2437f);
+    assert(!foodListing.equals(anotherListing3));
+    FoodListing anotherListing4 = new FoodListing(client, account, "Fruits",
+        10, LocalDateTime.now(), 34.0522f, -118.2437f);
+    assert(!foodListing.equals(anotherListing4));
+    FoodListing anotherListing5 = new FoodListing(client, account, "Fruits",
+        10, earliestPickUpTime, 34.02f, -118.2437f);
+    assert(!foodListing.equals(anotherListing5));
+    FoodListing anotherListing6 = new FoodListing(client, account, "Fruits",
+        10, earliestPickUpTime, 34.0522f, 118.2437f);
+    assert(!foodListing.equals(anotherListing6));
     assertEquals(foodListing.hashCode(), anotherListing.hashCode());
   }
 }

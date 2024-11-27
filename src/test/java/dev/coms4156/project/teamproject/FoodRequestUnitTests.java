@@ -29,6 +29,7 @@ class FoodRequestUnitTests {
 
     foodListing = new FoodListing(client, account, "chickpeas", 11,
         pickupTime, 124.1f, 9.1f);
+
     foodRequest = new FoodRequest(client, account, foodListing, 5);
   }
 
@@ -53,6 +54,14 @@ class FoodRequestUnitTests {
     FoodRequest anotherRequest = new FoodRequest(client, account, foodListing, 5);
     anotherRequest.setQuantityRequested(foodRequest.getQuantityRequested());
     assertNotEquals(foodRequest, anotherRequest);
+
+    FoodRequest anotherRequest2 = new FoodRequest(client, account, foodListing, 15);
+    assertNotEquals(foodRequest, anotherRequest2);
+    LocalDateTime pickupTime = LocalDateTime.of(2024, 11, 22, 10, 0);
+    FoodListing newListing = new FoodListing(client, account, "burger", 11,
+        pickupTime, 124.1f, 9.1f);
+    FoodRequest anotherRequest3 = new FoodRequest(client, account, newListing, 5);
+    assertNotEquals(foodRequest, anotherRequest3);
     assertNotEquals(foodRequest.hashCode(), anotherRequest.hashCode());
   }
 
