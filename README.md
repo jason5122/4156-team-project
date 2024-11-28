@@ -23,6 +23,16 @@
 [2]: https://www.baeldung.com/java-find-distance-between-points
 
 ---
+## Continuous Integration (CI) Reports
+The results of the CI loop and the reports mentioned below can be found at:
+https://github.com/jason5122/4156-team-project/actions
+
+The workflow automatically 
+1. Runs all tests (Unit tests, Integration tests, API tests etc)
+2. Runs checkstyle and generates a report
+3. Runs static analysis and generates a report
+4. Runs branch coverage and generates a report
+---
 
 ## **FoodRequest Endpoints**
 
