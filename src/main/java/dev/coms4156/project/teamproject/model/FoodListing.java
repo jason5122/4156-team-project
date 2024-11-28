@@ -90,6 +90,7 @@ public class FoodListing implements Serializable {
 
   /**
    * Gets the food type.
+   *
    * @return The food type.
    */
   public String getFoodType() {
@@ -98,6 +99,7 @@ public class FoodListing implements Serializable {
 
   /**
    * Sets the food type.
+   *
    * @param foodType The new food type.
    */
   public void setFoodType(String foodType) {
@@ -106,6 +108,7 @@ public class FoodListing implements Serializable {
 
   /**
    * Gets the quantity listed.
+   *
    * @return The quantity listed
    */
   public int getQuantityListed() {
@@ -113,15 +116,17 @@ public class FoodListing implements Serializable {
   }
 
   /**
-   * Sets the quantity listed
-   * @param quantityListed The new quantity listed
+   * Sets the quantity listed.
+   *
+   * @param quantityListed The new quantity listed.
    */
   public void setQuantityListed(int quantityListed) {
     this.quantityListed = quantityListed;
   }
 
   /**
-   * Gets earliest pick-up time
+   * Gets earliest pick-up time.
+   *
    * @return The earliest pick-up time
    */
   public LocalDateTime getEarliestPickUpTime() {
@@ -129,7 +134,8 @@ public class FoodListing implements Serializable {
   }
 
   /**
-   * Sets the earliest pick-up time
+   * Sets the earliest pick-up time.
+   *
    * @param earliestPickUpTime The new earliest pick-up time
    */
   public void setEarliestPickUpTime(LocalDateTime earliestPickUpTime) {
@@ -137,15 +143,17 @@ public class FoodListing implements Serializable {
   }
 
   /**
-   * Gets the latitude
-   * @return The latitude
+   * Gets the latitude.
+   *
+   * @return The latitude.
    */
   public float getLatitude() {
     return this.latitude;
   }
 
   /**
-   * Sets the latitude
+   * Sets the latitude.
+   *
    * @param latitude The new latitude
    */
   public void setLatitude(float latitude) {
@@ -153,15 +161,17 @@ public class FoodListing implements Serializable {
   }
 
   /**
-   * Gets the longitude
-   * @return The longitude
+   * Gets the longitude.
+   *
+   * @return The longitude.
    */
   public float getLongitude() {
     return this.longitude;
   }
 
   /**
-   * Sets the longitude
+   * Sets the longitude.
+   *
    * @param longitude The new longitude
    */
   public void setLongitude(float longitude) {
@@ -169,8 +179,9 @@ public class FoodListing implements Serializable {
   }
 
   /**
-   * Gets the listing ID
-   * @return The listing ID
+   * Gets the listing ID.
+   *
+   * @return The listing ID.
    */
   public int getListingId() {
     return this.listingId;
@@ -178,6 +189,7 @@ public class FoodListing implements Serializable {
 
   /**
    * Returns whether two FoodListing objects are equal based on their attributes.
+   *
    * @param other The other FoodListing object
    * @return Whether this FoodListing is equal to the other FoodListing
    */
@@ -196,8 +208,8 @@ public class FoodListing implements Serializable {
   }
 
   /**
-   * Computes a hash of this FoodListing object
-   * based on its attributes
+   * Computes a hash of this FoodListing object based on its attributes.
+   *
    * @return A hash of this FoodListing object
    */
   @Override

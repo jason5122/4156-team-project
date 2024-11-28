@@ -67,6 +67,7 @@ public class Donation implements Serializable {
 
   /**
    * Gets the donation ID.
+   *
    * @return The donation ID.
    */
   public int getDonationId() {
@@ -75,6 +76,7 @@ public class Donation implements Serializable {
 
   /**
    * Gets the food listing.
+   *
    * @return The food listing.
    */
   public FoodListing getFoodListing() {
@@ -83,6 +85,7 @@ public class Donation implements Serializable {
 
   /**
    * Gets the quantity picked up.
+   *
    * @return The quantity picked up.
    */
   public int getQuantityPickedUp() {
@@ -91,24 +94,26 @@ public class Donation implements Serializable {
 
   /**
    * Sets quantity picked up.
-   * @param quantityPickedUp The quantity picked up.
    *
+   * @param quantityPickedUp The quantity picked up.
    */
   public void setQuantityPickedUp(int quantityPickedUp) {
     this.quantityPickedUp = quantityPickedUp;
   }
 
   /**
-   * Gets the pick-up time
-   * @return The pick-up time
+   * Gets the pick-up time.
+   *
+   * @return The pick-up time.
    */
   public LocalDateTime getPickUpTime() {
     return pickUpTime;
   }
 
   /**
-   * Sets the pick-up time
-   * @param pickUpTime The new pick-up time
+   * Sets the pick-up time.
+   *
+   * @param pickUpTime The new pick-up time.
    */
   public void setPickUpTime(LocalDateTime pickUpTime) {
     this.pickUpTime = pickUpTime;
