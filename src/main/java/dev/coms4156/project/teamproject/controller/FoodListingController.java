@@ -274,6 +274,12 @@ public class FoodListingController {
   @PatchMapping("/fulfillRequest")
   public ResponseEntity<?> fulfillRequest(@RequestParam int clientId, @RequestParam int listingId,
                                           @RequestParam int quantityRequested) {
+    // Throw error if quantity requested is negative
+    if (quantityRequested < 0) {
+      Map<String, Object> body = new HashMap<>();
+      body.put("error", "Cannot request negative quantity.");
+      return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 
     // Fetch client and account data from database
     Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
