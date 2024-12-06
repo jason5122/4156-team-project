@@ -275,7 +275,7 @@ public class FoodListingController {
   public ResponseEntity<?> fulfillRequest(@RequestParam int clientId, @RequestParam int listingId,
                                           @RequestParam int quantityRequested) {
     // Throw error if quantity requested is negative
-    if (quantityRequested < 0) {
+    if (quantityRequested <= 0) {
       Map<String, Object> body = new HashMap<>();
       body.put("error", "Cannot request negative quantity.");
       return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
