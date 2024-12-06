@@ -9,6 +9,7 @@ import dev.coms4156.project.teamproject.repository.ClientProfileRepository;
 import dev.coms4156.project.teamproject.repository.FoodListingRepository;
 import dev.coms4156.project.teamproject.repository.FoodRequestRepository;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
@@ -125,6 +126,30 @@ public class FoodRequestController {
     }
   }
 
+  /**
+   * TODO: Fill this in.
+   */
+  @GetMapping("/getUnderAccount")
+  public ResponseEntity<?> getFoodRequestsUnderAccount(@RequestParam int clientId, @RequestParam int accountId) {
+
+    Optional<ClientProfile> clientOptional = clientProfileRepository.findById(clientId);
+    Optional<AccountProfile> accountOptional = accountProfileRepository.findById(accountId);
+    if (clientOptional.isEmpty() || accountOptional.isEmpty()) {
+      Map<String, Object> body = new HashMap<>();
+      body.put("error", "Client ID or account ID not found.");
+      return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    ClientProfile client = clientOptional.get();
+    AccountProfile account = accountOptional.get();
+    List<FoodRequest> accountListings = foodRequestRepository.findByClientAndAccount(client,
+        account);
+    if (!accountListings.isEmpty()) {
+      return ResponseEntity.ok().body(accountListings);
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+  }
 
   /**
    * Updates the quantityRequested of an existing FoodRequest.
