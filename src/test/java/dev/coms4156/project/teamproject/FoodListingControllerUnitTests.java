@@ -470,6 +470,18 @@ public class FoodListingControllerUnitTests {
   }
 
   @Test
+  public void fulfillRequestNegativeQuantityTest() {
+    when(foodListingRepository.findByClientAndListingId(
+        eq(client), eq(listing2Id)
+    )).thenReturn(Optional.of(listing2));
+    ResponseEntity<?> response = foodListingController
+        .fulfillRequest(client.getClientId(), listing2Id, -30);
+
+    // Check status code
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+  }
+
+  @Test
   public void fulfillRequestOkTest() {
     when(foodListingRepository.findByClientAndListingId(
         eq(client), eq(listing2Id)
